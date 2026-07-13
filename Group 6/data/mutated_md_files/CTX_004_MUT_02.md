@@ -1,0 +1,28 @@
+```JSON hl_lines="22"
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "FastAPI",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/items/": {
+            "get": {
+                "summary": "Read Items",
+                "operationId": "read_items_items__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "x-aperture-labs-portal": "blue"
+            }
+        }
+    }
+}
+```

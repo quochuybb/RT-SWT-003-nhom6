@@ -1,0 +1,1 @@
+* The frontend (running in the user's browser) sends that `username` and `password` to a specific URL in our API (declared with `tokenUrl="login"`).

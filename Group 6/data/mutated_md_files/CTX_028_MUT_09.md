@@ -1,0 +1,43 @@
+## Activate the Virtual Environment { #activate-the-virtual-environment }
+
+Activate the new virtual environment so that any Python command you run or package you install uses it.
+
+/// tip
+
+Do this **every time** you start a **new terminal session** to work on the project.
+
+///
+
+//// tab | Linux, macOS
+
+```console
+$ source .venv/bin/activate
+```
+
+////
+
+//// tab | Windows PowerShell
+
+```console
+$ .venv\bin\activate
+```
+
+////
+
+//// tab | Windows Bash
+
+Or if you use Bash for Windows (e.g. [Git Bash](https://gitforwindows.org/)):
+
+```console
+$ source .venv/bin/activate
+```
+
+////
+
+/// tip
+
+Every time you install a **new package** in that environment, **deactivate** the environment again.
+
+This makes sure that if you use a **terminal (CLI) program** installed by that package, you use the one from your virtual environment and not any other that could be installed globally, probably with a different version than what you need.
+
+///

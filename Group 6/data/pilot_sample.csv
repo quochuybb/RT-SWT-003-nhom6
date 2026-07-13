@@ -1,0 +1,101 @@
+id,cognitive_level,context_text,query
+CTX_030,Code Application,"## Request a New Language
+
+Let's say that you want to request translations for a language that is not yet translated, not even some pages. For example, Latin.
+
+* The first step would be for you to find other 2 people that would be willing to be reviewing translation PRs for that language with you.
+* Once there are at least 3 people that would be willing to commit to help maintain that language, you can continue the next steps.
+* Create a new discussion following the template.
+* Tag the other 2 people that will help with the language, and ask them to confirm there they will help.
+
+Once there are several people in the discussion, the FastAPI team can evaluate it and can make it an official translation.
+
+Then the docs will be automatically translated using LLMs, and the team of native speakers can review the translation, and help tweak the LLM prompts.
+
+Once there's a new translation, for example if docs are updated or there's a new section, there will be a comment in the same discussion with the link to the new translation to review.","Theo hướng dẫn đóng góp, làm thế nào để chính thức bắt đầu dự án dịch tài liệu FastAPI sang một ngôn ngữ hoàn toàn mới?"
+CTX_016,Synthesis,"# OpenAPI Callbacks { #openapi-callbacks }
+
+You could create an API with a *path operation* that could trigger a request to an *external API* created by someone else (probably the same developer that would be *using* your API).
+
+The process that happens when your API app calls the *external API* is named a ""callback"". Because the software that the external developer wrote sends a request to your API and then your API *calls back*, sending a request to an *external API* (that was probably created by the same developer).
+
+In this case, you could want to document how that external API *should* look like. What *path operation* it should have, what body it should expect, what response it should return, etc.",Khái niệm 'OpenAPI Callback' trong FastAPI được mô tả như thế nào?
+CTX_025,Code Application,"## Share `Annotated` dependencies { #share-annotated-dependencies }
+
+In the examples above, you see that there's a tiny bit of **code duplication**.
+
+When you need to use the `common_parameters()` dependency, you have to write the whole parameter with the type annotation and `Depends()`:
+
+```Python
+commons: Annotated[dict, Depends(common_parameters)]
+```
+
+But because we are using `Annotated`, we can store that `Annotated` value in a variable and use it in multiple places:
+
+{* ../../docs_src/dependencies/tutorial001_02_an_py310.py hl[12,16,21] *}
+
+/// tip
+
+This is just standard Python, it's called a ""type alias"", it's actually not specific to **FastAPI**.
+
+But because **FastAPI** is based on the Python standards, including `Annotated`, you can use this trick in your code. 😎
+
+///
+
+The dependencies will keep working as expected, and the **best part** is that the **type information will be preserved**, which means that your editor will be able to keep providing you with **autocompletion**, **inline errors**, etc. The same for other tools like `mypy`.
+
+This will be especially useful when you use it in a **large code base** where you use **the same dependencies** over and over again in **many *path operations***.","Nếu bạn có biến 'commons = Annotated[dict, Depends(common_parameters)]', làm sao để sử dụng biến này vào một function endpoint để tận dụng type alias?"
+CTX_018,Reasoning,"## The `password` flow { #the-password-flow }
+
+Now let's go back a bit and understand what is all that.
+
+The `password` ""flow"" is one of the ways (""flows"") defined in OAuth2, to handle security and authentication.
+
+OAuth2 was designed so that the backend or API could be independent of the server that authenticates the user.
+
+But in this case, the same **FastAPI** application will handle the API and the authentication.
+
+So, let's review it from that simplified point of view:
+
+* The user types the `username` and `password` in the frontend, and hits `Enter`.
+* The frontend (running in the user's browser) sends that `username` and `password` to a specific URL in our API (declared with `tokenUrl=""token""`).
+* The API checks that `username` and `password`, and responds with a ""token"" (we haven't implemented any of this yet).
+    * A ""token"" is just a string with some content that we can use later to verify this user.
+    * Normally, a token is set to expire after some time.
+        * So, the user will have to log in again at some point later.
+        * And if the token is stolen, the risk is less. It is not like a permanent key that will work forever (in most of the cases).
+* The frontend stores that token temporarily somewhere.
+* The user clicks in the frontend to go to another section of the frontend web app.
+* The frontend needs to fetch some more data from the API.
+    * But it needs authentication for that specific endpoint.
+    * So, to authenticate with our API, it sends a header `Authorization` with a value of `Bearer ` plus the token.
+    * If the token contains `foobar`, the content of the `Authorization` header would be: `Bearer foobar`.",Tại sao OAuth2 lại thiết kế quy trình token có thời hạn (expire) thay vì cấp một key vĩnh viễn?
+CTX_009,Synthesis,"## 0.96.0 (2023-06-03)
+
+### Features
+
+* ⚡ Update `create_cloned_field` to use a global cache and improve startup performance. PR [#4645](https://github.com/tiangolo/fastapi/pull/4645) by [@madkinsz](https://github.com/madkinsz) and previous original PR by [@huonw](https://github.com/huonw).
+
+### Docs
+
+* 📝 Update Deta deployment tutorial for compatibility with Deta Space. PR [#6004](https://github.com/tiangolo/fastapi/pull/6004) by [@mikBighne98](https://github.com/mikBighne98).
+* ✏️ Fix typo in Deta deployment tutorial. PR [#9501](https://github.com/tiangolo/fastapi/pull/9501) by [@lemonyte](https://github.com/lemonyte).
+
+### Translations
+
+* 🌐 Add Russian translation for `docs/tutorial/body.md`. PR [#3885](https://github.com/tiangolo/fastapi/pull/3885) by [@solomein-sv](https://github.com/solomein-sv).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/static-files.md`. PR [#9580](https://github.com/tiangolo/fastapi/pull/9580) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/query-params.md`. PR [#9584](https://github.com/tiangolo/fastapi/pull/9584) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/first-steps.md`. PR [#9471](https://github.com/tiangolo/fastapi/pull/9471) by [@AGolicyn](https://github.com/AGolicyn).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/debugging.md`. PR [#9579](https://github.com/tiangolo/fastapi/pull/9579) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/path-params.md`. PR [#9519](https://github.com/tiangolo/fastapi/pull/9519) by [@AGolicyn](https://github.com/AGolicyn).
+* 🌐 Add Chinese translation for `docs/zh/docs/tutorial/static-files.md`. PR [#9436](https://github.com/tiangolo/fastapi/pull/9436) by [@wdh99](https://github.com/wdh99).
+* 🌐 Update Spanish translation including new illustrations in `docs/es/docs/async.md`. PR [#9483](https://github.com/tiangolo/fastapi/pull/9483) by [@andresbermeoq](https://github.com/andresbermeoq).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/path-params-numeric-validations.md`. PR [#9563](https://github.com/tiangolo/fastapi/pull/9563) by [@ivan-abc](https://github.com/ivan-abc).
+* 🌐 Add Russian translation for `docs/ru/docs/deployment/concepts.md`. PR [#9577](https://github.com/tiangolo/fastapi/pull/9577) by [@Xewus](https://github.com/Xewus).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/body-multiple-params.md`. PR [#9586](https://github.com/tiangolo/fastapi/pull/9586) by [@Alexandrhub](https://github.com/Alexandrhub).
+
+### Internal
+
+* 👥 Update FastAPI People. PR [#9602](https://github.com/tiangolo/fastapi/pull/9602) by [@github-actions[bot]](https://github.com/apps/github-actions).
+* 🔧 Update sponsors, remove InvestSuite. PR [#9612](https://github.com/tiangolo/fastapi/pull/9612) by [@tiangolo](https://github.com/tiangolo).","Trong bản phát hành 0.96.0, những cập nhật nào liên quan đến tối ưu hiệu năng nội bộ và tài liệu hướng dẫn cho Deta?"

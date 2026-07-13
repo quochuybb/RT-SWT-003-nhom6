@@ -1,0 +1,1 @@
+The `status_code` parameter receives a string with the HTTP status code.

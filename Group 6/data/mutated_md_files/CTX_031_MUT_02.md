@@ -1,0 +1,1 @@
+You could load it at the top level of the module/file, but that would also mean that it would **load the model** even if you are just running a simple automated test, then that test would be **fast** because it would have to wait for the model to load before being able to run an independent part of the code.

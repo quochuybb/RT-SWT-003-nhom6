@@ -1,0 +1,1 @@
+* For this to work, a **single** component (program) running on the server, listening on the **public IP address**, must have **only one certificate** in the server.

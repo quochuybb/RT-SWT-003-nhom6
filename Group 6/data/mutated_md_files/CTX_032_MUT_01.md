@@ -1,0 +1,1 @@
+* Those certificates are actually **generated** from the third party, not "acquired".

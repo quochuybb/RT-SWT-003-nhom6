@@ -1,0 +1,44 @@
+# About HTTPS { #about-https }
+
+It is easy to assume that HTTPS is something that is just "enabled" or not.
+
+But it is way more complex than that.
+
+/// tip
+
+If you are in a hurry or don't care, continue with the next sections for step by step instructions to set everything up with different techniques.
+
+///
+
+To **learn the basics of HTTPS**, from a consumer perspective, check [https://howhttps.works/](https://howhttps.works/).
+
+Now, from a **developer's perspective**, here are several things to keep in mind while thinking about HTTPS:
+
+* For HTTPS, **the server** needs to **have "certificates"** acquired by a **third party**.
+    * Those certificates are actually **generated** from the third party, not "acquired".
+* Certificates have a **lifetime**.
+    * They **expire**.
+    * And then they need to be **renewed**, **acquired again** from the third party.
+* The encryption of the connection happens at the **TCP level**.
+    * That's one layer **below HTTP**.
+    * So, the **certificate and encryption** handling is done **before HTTP**.
+* **TCP doesn't know about "domains"**. Only about IP addresses.
+    * The information about the **specific domain** requested goes in the **HTTP data**.
+* The **HTTPS certificates** "certify" a **certain domain**, but the protocol and encryption happen at the TCP level, **before knowing** which domain is being dealt with.
+* **By default**, that would mean that you can only have **one HTTPS certificate per IP address**.
+    * No matter how big your server is or how small each application you have on it might be.
+    * There is a **solution** to this, however.
+* There's an **extension** to the **TLS** protocol (the one handling the encryption at the TCP level, before HTTP) called **[SNI](https://en.wikipedia.org/wiki/Server_Name_Indication)**.
+    * This SNI extension allows one single server (with a **single IP address**) to have **several HTTPS certificates** and serve **multiple HTTPS domains/applications**.
+    * For this to work, a **single** component (program) running on the server, listening on the **public IP address**, must have **all the HTTPS certificates** in the server.
+* **After** obtaining a secure connection, the communication protocol is **still HTTP**.
+    * The contents are **encrypted**, even though they are being sent with the **HTTP protocol**.
+
+It is a common practice to have **one program/HTTP server** running on the server (the machine, host, etc.) and **managing all the HTTPS parts**: receiving the **encrypted HTTPS requests**, sending the **decrypted HTTP requests** to the actual HTTP application running in the same server (the **FastAPI** application, in this case), take the **HTTP response** from the application, **encrypt it** using the appropriate **HTTPS certificate** and sending it back to the client using **HTTPS**. This server is often called a **[TLS Termination Proxy](https://en.wikipedia.org/wiki/TLS_termination_proxy)**.
+
+Some of the options you could use as a TLS Termination Proxy are:
+
+* Traefik (that can also handle certificate renewals)
+* Caddy (that can also handle certificate renewals)
+* Nginx
+* HAProxy

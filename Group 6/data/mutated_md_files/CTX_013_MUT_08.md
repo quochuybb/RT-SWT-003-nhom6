@@ -1,0 +1,1 @@
+All the framework was designed to be easy and intuitive to use, all the decisions were tested on multiple editors even **after** starting development, to ensure the best development experience.
