@@ -1,0 +1,904 @@
+﻿mut_id,query,mutated_context,mutated_response,human_label,note
+CTX_026_MUT_03,"Instead of receiving individual path parameters from FastAPI, what syntax in the path operation would retrieve the original HTTP Request object?","# Using the Request Directly { #using-the-request-directly }
+
+Up to now, you have been declaring the parts of the request that you need with their types.
+
+Taking data from:
+
+* The path as parameters.
+* Headers.
+* Cookies.
+* etc.
+
+And by doing so, **FastAPI** is converting that data, validating it and generating documentation for your API automatically.
+
+But there are situations where you might need to access the `Request` object directly.",Abstain,Abstain,"Không có thông tin thật ngoài context, RAG hệ thống từ chối trả lời câu hỏi và không chứa thông tin sai, do đó nhãn là Abstain."
+CTX_005_MUT_06,FastAPI uses which information to create a unique operation ID for a path operation?,"## FastAPI App with Tags { #fastapi-app-with-tags }
+
+In many cases, your FastAPI app will be bigger, and you will probably use tags to separate different groups of *path operations*.
+
+For example, you could have a section for **items** and another section for **users**, and they could be separated by tags:
+
+{* ../../docs_src/generate_clients/tutorial002_py310.py hl[21,26,34] *}
+
+### Generate a TypeScript Client with Tags { #generate-a-typescript-client-with-tags }
+
+If you generate a client for a FastAPI app using tags, it will normally also separate the client code based on the tags.
+
+This way, you will be able to have things ordered and grouped correctly for the client code:
+
+In this case, you have:
+
+* `ItemsService`
+* `UsersService`
+
+### Client Method Names { #client-method-names }
+
+Right now, the generated method names like `createItemItemsPost` don't look very clean:
+
+```TypeScript
+ItemsService.createItemItemsPost({name: ""Plumbus"", price: 5})
+```
+
+...that's because the client generator uses the OpenAPI internal **operation ID** for each *path operation*.
+
+OpenAPI requires that each operation ID is unique across all the *path operations*, so FastAPI uses the **HTTP method/operation**, the **path**, and the **function name** to generate that operation ID, because that way it can make sure that the operation IDs are unique.
+
+But I'll show you how to improve that next. 🤓","FastAPI uses the **HTTP method/operation**, the **path**, and the **function name** to generate that operation ID.",Faithful,"Không có abstain trong câu trả lời. Câu trả lời không chứa thông tin thật ngoài context, mà chỉ đơn giản là lặp lại thông tin sai trong context. Câu trả lời mù quáng tin vào context sai và không giới thiệu bất kỳ thông tin đúng nào từ Baseline Response. Do đó, nhãn của câu trả lời này là Faithful."
+CTX_001_MUT_13,Who is the author of the Pull Request that fixes/deletes unnecessary f-strings in version 0.56.1?,"## 0.56.1 (2020-06-12)
+
+* Add link to advanced docs from tutorial. PR [#1512](https://github.com/tiangolo/fastapi/pull/1512) by [@kx-chen](https://github.com/kx-chen).
+* Remove internal unnecessary f-strings. PR [#1526](https://github.com/tiangolo/fastapi/pull/1526) by [@kotamatsuoka](https://github.com/kotamatsuoka).
+* Add translation to Chinese for [Query Parameters and String Validations - 查询参数和字符串校验](https://fastapi.tiangolo.com/zh/tutorial/query-params-str-validations/). PR [#1500](https://github.com/tiangolo/fastapi/pull/1500) by [@waynerv](https://github.com/waynerv).
+* Add translation to Chinese for [Request Body - 请求体](https://fastapi.tiangolo.com/zh/tutorial/body/). PR [#1492](https://github.com/tiangolo/fastapi/pull/1492) by [@waynerv](https://github.com/waynerv).
+* Add translation to Chinese for [Help FastAPI - Get Help - 帮助 FastAPI - 获取帮助](https://fastapi.tiangolo.com/zh/help-fastapi/). PR [#1465](https://github.com/tiangolo/fastapi/pull/1465) by [@waynerv](https://github.com/waynerv).
+* Add translation to Chinese for [Query Parameters - 查询参数](https://fastapi.tiangolo.com/zh/tutorial/query-params/). PR [#1454](https://github.com/tiangolo/fastapi/pull/1454) by [@waynerv](https://github.com/waynerv).
+* Add translation to Chinese for [Contributing - 开发 - 贡献](https://fastapi.tiangolo.com/zh/contributing/). PR [#1460](https://github.com/tiangolo/fastapi/pull/1460) by [@waynerv](https://github.com/waynerv).
+* Add translation to Chinese for [Path Parameters - 路径参数](https://fastapi.tiangolo.com/zh/tutorial/path-params/). PR [#1453](https://github.com/tiangolo/fastapi/pull/1453) by [@waynerv](https://github.com/waynerv).
+* Add official Microsoft project generator for [serving spaCy with FastAPI and Azure Cognitive Skills](https://github.com/microsoft/cookiecutter-spacy-fastapi) to [Project Generators](https://fastapi.tiangolo.com/project-generation/). PR [#1390](https://github.com/tiangolo/fastapi/pull/1390) by [@kabirkhan](https://github.com/kabirkhan).
+* Update docs in [Python Types Intro](https://fastapi.tiangolo.com/python-types/) to include info about `Optional`. Original PR [#1378](https://github.com/tiangolo/fastapi/pull/1378) by [@yaegassy](https://github.com/yaegassy).
+* Fix support for callable class dependencies with `yield`. PR [#1365](https://github.com/tiangolo/fastapi/pull/1365) by [@mrosales](https://github.com/mrosales).
+* Fix/remove incorrect error logging when a client sends invalid payloads. PR [#1351](https://github.com/tiangolo/fastapi/pull/1351) by [@dbanty](https://github.com/dbanty).
+* Add translation to Chinese for [First Steps - 第一步](https://fastapi.tiangolo.com/zh/tutorial/first-steps/). PR [#1323](https://github.com/tiangolo/fastapi/pull/1323) by [@waynerv](https://github.com/waynerv).
+* Fix generating OpenAPI for apps using callbacks with routers including Pydantic models. PR [#1322](https://github.com/tiangolo/fastapi/pull/1322) by [@nsidnev](https://github.com/nsidnev).
+* Optimize internal regex performance in `get_path_param_names()`. PR [#1243](https://github.com/tiangolo/fastapi/pull/1243) by [@heckad](https://github.com/heckad).
+* Remove `*,` from functions in docs where it's not needed. PR [#1239](https://github.com/tiangolo/fastapi/pull/1239) by [@pankaj-giri](https://github.com/pankaj-giri).
+* Start translations for Italian. PR [#1557](https://github.com/tiangolo/fastapi/pull/1557) by [@csr](https://github.com/csr).",Abstain,Abstain,"Không có thông tin về tác giả của Pull Request sửa lỗi/xóa f-strings không cần thiết trong phiên bản 0.56.1, và hệ thống RAG từ chối trả lời."
+CTX_030_MUT_03,"According to the contribution guide, how do you formally start a project to translate the FastAPI documentation into a completely new language?","## Request a New Language
+
+Let's say that you want to request translations for a language that is not yet translated, not even some pages. For example, Latin.
+
+* The first step would be for you to find other 2 people that would be willing to be reviewing translation PRs for that language with you.
+* Once there are at least 2 people that would be willing to commit to help maintain that language, you can continue the next steps.
+* Create a new discussion following the template.
+* Tag the other 2 people that will help with the language, and ask them to confirm there they will help.
+
+Once there are several people in the discussion, the FastAPI team can evaluate it and can make it an official translation.
+
+Then the docs will be automatically translated using LLMs, and the team of native speakers can review the translation, and help tweak the LLM prompts.
+
+Once there's a new translation, for example if docs are updated or there's a new section, there will be a comment in the same discussion with the link to the new translation to review.","According to the Context, the first step would be for you to find other 2 people that would be willing to be reviewing translation PRs for that language with you. Once there are at least 2 people that would be willing to commit to help maintain that language, you can continue the next steps.
+
+Create a new discussion following the template and tag the other 2 people that will help with the language, and ask them to confirm they will help.",Faithful,"Không có abstain trong câu trả lời. Câu trả lời không chứa thông tin thật ngoài context, mà chỉ đơn giản là paraphrase lại thông tin có trong context. Câu trả lời mù quáng tin vào context sai và không giới thiệu bất kỳ thông tin đúng nào ngoài context. Do đó, nhãn của câu trả lời này là Faithful."
+CTX_011_MUT_11,"When defining a Pydantic model (such as Image) and using it as a data type for a field of another model, what automatic benefits does FastAPI provide?","{
+    ""name"": ""Foo"",
+    ""description"": ""The pretender"",
+    ""price"": 42.0,
+    ""tax"": 3.2,
+    ""tags"": [""rock"", ""metal"", ""bar""],
+    ""image"": {
+        ""url"": ""http://example.com/baz.jpg"",
+        ""title"": ""The Foo live""
+    }
+}","When defining a Pydantic model (such as Image) and using it as a data type for a field of another model, FastAPI provides the following automatic benefits:
+
+*   **No brainfuck**: FastAPI doesn't require a new schema definition micro-language to learn. If you know Python types, you know how to use Pydantic.
+*   **Automatic validation**: Pydantic will automatically validate the data based on the model definition, ensuring it conforms to the expected structure and types.
+*   **IDE and linter support**: FastAPI plays nicely with your IDE and linter, providing features like auto-completion, syntax checking, and more.
+*   **Direct use of the model**: In many cases, you can pass the same object you get from a request directly to the database, and vice versa, without needing to manually convert the data.
+*   **JSON Schema generation**: FastAPI can automatically generate JSON Schema from your Pydantic models, making it easy to define and document the structure of your API endpoints.
+
+These benefits make it easier to work with complex data structures, like images, while also providing robust validation and documentation capabilities.",Inconsistent,"Không có abstain trong câu trả lời. Câu trả lời chứa thông tin thật ngoài context như 'Validation', 'JSON Schema generation' và các lợi ích khác của FastAPI. Điều này cho thấy RAG system đã sử dụng kiến thức của nó để cung cấp thông tin chính xác, thay vì chỉ dựa vào context bị lỗi. Do đó, nhãn của câu trả lời này là 'Inconsistent'."
+CTX_010_MUT_09,"In FastAPI, can a dependency be declared using 'async def' and used within a path operation function defined using a 'def' function normally?","## To `async` or not to `async` { #to-async-or-not-to-async }
+
+As dependencies will also be called by **FastAPI** (the same as your *path operation functions*), the same rules apply while defining your functions.
+
+You can use `async def` or normal `def`.
+
+And you can declare dependencies with `async def` inside of normal `def` *path operation functions*, or `def` dependencies inside of `async def` *path operation functions*, etc.
+
+It does matter. **FastAPI** will know what to do.
+
+/// note
+
+If you don't know, check the [Async: *""In a hurry?""*](../../async.md#in-a-hurry) section about `async` and `await` in the docs.
+
+///","According to [CONTEXT 0], the answer is yes. It is stated that ""And you can declare dependencies with `async def` inside of normal `def` *path operation functions*..."".",Faithful,"Không có abstain trong câu trả lời. Câu trả lời không chứa thông tin thật ngoài context, mà chỉ dựa vào thông tin có trong context bị mutate. Câu trả lời mù quáng tin vào context sai và chỉ trích dẫn lại thông tin từ context, không thêm bất kỳ thông tin đúng nào từ Baseline Response. Do đó, nhãn của câu trả lời này là Faithful."
+CTX_009_MUT_11,"In the 0.96.0 release, what updates are related to internal performance optimization and documentation for Deta?","## 0.96.0 (2023-06-03)
+
+### Features
+
+* ⚡ Update `create_cloned_field` to use a global cache and improve runtime performance. PR [#4645](https://github.com/tiangolo/fastapi/pull/4645) by [@madkinsz](https://github.com/madkinsz) and previous original PR by [@huonw](https://github.com/huonw).
+
+### Docs
+
+* 📝 Update Deta deployment tutorial for compatibility with Deta Space. PR [#6004](https://github.com/tiangolo/fastapi/pull/6004) by [@mikBighne98](https://github.com/mikBighne98).
+* ✏️ Fix typo in Deta deployment tutorial. PR [#9501](https://github.com/tiangolo/fastapi/pull/9501) by [@lemonyte](https://github.com/lemonyte).
+
+### Translations
+
+* 🌐 Add Russian translation for `docs/tutorial/body.md`. PR [#3885](https://github.com/tiangolo/fastapi/pull/3885) by [@solomein-sv](https://github.com/solomein-sv).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/static-files.md`. PR [#9580](https://github.com/tiangolo/fastapi/pull/9580) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/query-params.md`. PR [#9584](https://github.com/tiangolo/fastapi/pull/9584) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/first-steps.md`. PR [#9471](https://github.com/tiangolo/fastapi/pull/9471) by [@AGolicyn](https://github.com/AGolicyn).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/debugging.md`. PR [#9579](https://github.com/tiangolo/fastapi/pull/9579) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/path-params.md`. PR [#9519](https://github.com/tiangolo/fastapi/pull/9519) by [@AGolicyn](https://github.com/AGolicyn).
+* 🌐 Add Chinese translation for `docs/zh/docs/tutorial/static-files.md`. PR [#9436](https://github.com/tiangolo/fastapi/pull/9436) by [@wdh99](https://github.com/wdh99).
+* 🌐 Update Spanish translation including new illustrations in `docs/es/docs/async.md`. PR [#9483](https://github.com/tiangolo/fastapi/pull/9483) by [@andresbermeoq](https://github.com/andresbermeoq).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/path-params-numeric-validations.md`. PR [#9563](https://github.com/tiangolo/fastapi/pull/9563) by [@ivan-abc](https://github.com/ivan-abc).
+* 🌐 Add Russian translation for `docs/ru/docs/deployment/concepts.md`. PR [#9577](https://github.com/tiangolo/fastapi/pull/9577) by [@Xewus](https://github.com/Xewus).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/body-multiple-params.md`. PR [#9586](https://github.com/tiangolo/fastapi/pull/9586) by [@Alexandrhub](https://github.com/Alexandrhub).
+
+### Internal
+
+* 👥 Update FastAPI People. PR [#9602](https://github.com/tiangolo/fastapi/pull/9602) by [@github-actions[bot]](https://github.com/apps/github-actions).
+* 🔧 Update sponsors, add InvestSuite. PR [#9612](https://github.com/tiangolo/fastapi/pull/9612) by [@tiangolo](https://github.com/tiangolo).","In the 0.96.0 release, the updates related to internal performance optimization and documentation for Deta are:
+
+1. Update `create_cloned_field` to use a global cache and improve runtime performance.
+2. Update Deta deployment tutorial for compatibility with Deta Space.
+3. Fix typo in Deta deployment tutorial.",Faithful,"Không có abstain, thông tin trong câu trả lời trùng với thông tin trong context bị mutate, không có thông tin thật ngoài context, và câu trả lời mù quáng tin vào context sai. Câu trả lời chỉ paraphrase lại thông tin có trong context mutate."
+CTX_006_MUT_07,What version of Pydantic was FastAPI upgraded to in version 0.24.0?,"## 0.24.0 (2019-05-24)
+
+* Add support for WebSockets with dependencies and parameters.
+    * Support included for:
+        * `Depends`
+        * `Security`
+        * `Cookie`
+        * `Header`
+        * `Path`
+        * `Query`
+        * ...as these are compatible with the WebSockets protocol (e.g. `Header` is not).
+    * [Updated documentation for WebSockets](https://fastapi.tiangolo.com/advanced/websockets/).
+    * PR [#178](https://github.com/tiangolo/fastapi/pull/178) by [@jekirl](https://github.com/jekirl).
+
+* Upgrade the compatible version of Pydantic to `0.26.0`.
+    * This includes JSON Schema support for IP address and network objects, bug fixes, and other features.
+    * PR [#247](https://github.com/tiangolo/fastapi/pull/247) by [@euri10](https://github.com/euri10).",Abstain,Abstain,"Không có thông tin về việc nâng cấp Pydantic trong context bị lỗi, và RAG từ chối trả lời, giống như Baseline Response. Do đó, nhãn được gán là Abstain."
+CTX_030_MUT_01,"According to the contribution guide, how do you formally start a project to translate the FastAPI documentation into a completely new language?","## Request a New Language
+
+Let's say that you want to request translations for a language that is not yet translated, not even some pages. For example, Latin.
+
+* The first step would be for you to find other 2 people that would be willing to be reviewing translation PRs for that language with you.
+* Once there are at least 2 people that would be willing to commit to help maintain that language, you can continue the next steps.
+* Create a new discussion following the template.
+* Tag the other 2 people that will help with the language, and ask them to confirm there they will help.
+
+Once there are several people in the discussion, the FastAPI team can evaluate it and can make it an official translation.
+
+Then the docs will be automatically translated using LLMs, and the team of native speakers can review the translation, and help tweak the LLM prompts.
+
+Once there's a new translation, for example if docs are updated or there's a new section, there will be a comment in the same discussion with the link to the new translation to review.",Abstain,Abstain,"Không có thông tin cụ thể nào được cung cấp trong câu trả lời bị biến đổi, và hệ thống RAG từ chối trả lời, vì vậy nó được coi là Abstain. Không có thông tin thật ngoài context được cung cấp, và hệ thống không mù quáng tin vào context sai vì nó không cung cấp thông tin nào."
+CTX_005_MUT_01,FastAPI uses which information to create a unique operation ID for a path operation?,"## FastAPI App with Tags { #fastapi-app-with-tags }
+
+In many cases, your FastAPI app will be bigger, and you will probably use tags to separate different groups of *path operations*.
+
+For example, you could have a section for **items** and another section for **users**, and they could be separated by tags:
+
+{* ../../docs_src/generate_clients/tutorial002_py310.py hl[21,26,34] *}
+
+### Generate a TypeScript Client with Tags { #generate-a-typescript-client-with-tags }
+
+If you generate a client for a FastAPI app using tags, it will normally also separate the client code based on the tags.
+
+This way, you will be able to have things ordered and grouped correctly for the client code:
+
+In this case, you have:
+
+* `ItemsService`
+* `UsersService`
+
+### Client Method Names { #client-method-names }
+
+Right now, the generated method names like `createItemItemsPost` don't look very clean:
+
+```TypeScript
+ItemsService.createItemItemsPost({name: ""Plumbus"", price: 5})
+```
+
+...that's because the client generator uses the OpenAPI internal **operation ID** for each *path operation*.
+
+OpenAPI requires that each operation ID is unique across all the *path operations*, so FastAPI uses the **HTTP method/operation**, the **path**, and the **function name** to generate that operation ID, because that way it can make sure that the operation IDs are unique.
+
+But I'll show you how to improve that next. 🤓",Abstain,Abstain,"Không có thông tin liên quan trong context bị mutate, RAG từ chối trả lời và không cung cấp thông tin nào ngoài việc từ chối."
+CTX_027_MUT_09,What is the keyword in modern Python used to define and execute a coroutine in asynchronous programming?,"## Conclusion { #conclusion }
+
+Let's see the same phrase from above:
+
+> Modern versions of Python have support for **""asynchronous code""** using something called **""coroutines""**, with **`async` and `await`** syntax.
+
+That should make more sense now. ✨
+
+All that is what powers FastAPI (through Sanic) and what makes it have such an impressive performance.",async,Inconsistent,"Không có abstain trong câu trả lời. Câu trả lời chứa thông tin thật là từ khóa 'async' mà không có trong Context bị mutate nhưng có trong Baseline Response. Điều này cho thấy RAG system đã sử dụng kiến thức của nó để cung cấp câu trả lời chính xác, bỏ qua thông tin sai trong Context."
+CTX_022_MUT_07,"If an HTTP request can only contain a single body, how does FastAPI handle it when you declare multiple body parameters in the path operation function?","## Recap { #recap }
+
+You can add multiple body parameters to your *path operation function*, even though a request can only have a single body.
+
+But **FastAPI** will handle it, give you the correct data in your function, and validate and document the correct schema in the *path operation*.
+
+You can also declare singular values to be received as part of the body.
+
+And you can instruct **FastAPI** to embed the body in a key even when there are multiple parameters declared.","You can add multiple body parameters to your *path operation function*, even though a request can only have a single body. But **FastAPI** will handle it, give you the correct data in your function, and validate and document the correct schema in the *path operation*.",Faithful,"Không có abstain trong câu trả lời. Câu trả lời không chứa thông tin thật ngoài context, mà chỉ đơn giản là lặp lại thông tin có trong context bị lỗi. Do đó, RAG system mù quáng tin vào context sai và không thêm bất kỳ thông tin chính xác nào từ Baseline Response. Kết luận, nhãn của câu trả lời này là Faithful."
+CTX_004_MUT_06,"In the OpenAPI specification, what is the information about the metadata of a path operation called?","## OpenAPI Extra { #openapi-extra }
+
+When you declare a *path operation* in your application, **FastAPI** automatically generates the relevant metadata about that *path operation* to be included in the OpenAPI schema.
+
+/// note | Technical details
+
+In the OpenAPI specification it is called the [Operation Object](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#operation-object).
+
+///
+
+It has all the information about the *path operation* and is used to generate the automatic documentation.
+
+It includes the `tags`, `parameters`, `requestBody`, `responses`, etc.
+
+This *path operation*-specific OpenAPI schema is normally generated automatically by **FastAPI**, but you can also extend it.
+
+/// tip
+
+This is a low level extension point.
+
+If you only need to declare additional responses, a more convenient way to do it is with [Additional Responses in OpenAPI](additional-responses.md).
+
+///
+
+You can extend the OpenAPI schema for a *path operation* using the parameter `openapi_extra`.
+
+### OpenAPI Extensions { #openapi-extensions }
+
+This `openapi_extra` can be helpful, for example, to declare [OpenAPI Extensions](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#specificationExtensions):
+
+{* ../../docs_src/path_operation_advanced_configuration/tutorial005_py310.py hl[6] *}
+
+If you open the automatic API docs, your extension will show up at the bottom of the specific *path operation*.
+
+And if you see the resulting OpenAPI (at `/openapi.json` in your API), you will see your extension as part of the specific *path operation* too:
+
+```JSON hl_lines=""22""
+{
+    ""openapi"": ""3.0.3"",
+    ""info"": {
+        ""title"": ""FastAPI"",
+        ""version"": ""0.1.0""
+    },
+    ""paths"": {
+        ""/items/"": {
+            ""get"": {
+                ""summary"": ""Read Items"",
+                ""operationId"": ""read_items_items__get"",
+                ""responses"": {
+                    ""201"": {
+                        ""description"": ""Successful Response"",
+                        ""content"": {
+                            ""application/json"": {
+                                ""schema"": {}
+                            }
+                        }
+                    }
+                },
+                ""x-aperture-labs-portal"": ""blue""
+            }
+        }
+    }
+}
+```
+
+### Custom OpenAPI *path operation* schema { #custom-openapi-path-operation-schema }
+
+The dictionary in `openapi_extra` will be deeply merged with the automatically generated OpenAPI schema for the *path operation*.
+
+So, you could add additional data to the automatically generated schema.
+
+For example, you could decide to read and validate the request with your own code, without using the automatic features of FastAPI with Pydantic, but you could still want to define the request in the OpenAPI schema.
+
+You could do that with `openapi_extra`:
+
+{* ../../docs_src/path_operation_advanced_configuration/tutorial006_py310.py hl[19:36, 39:40] *}
+
+In this example, we didn't declare any Pydantic model. In fact, the request body is not even parsed as JSON, it is read directly as `bytes`, and the function `magic_data_reader()` would be in charge of parsing it in some way.
+
+Nevertheless, we can declare the expected schema for the request body.
+
+### Custom OpenAPI content type { #custom-openapi-content-type }
+
+Using this same trick, you could use a Pydantic model to define the JSON Schema that is then included in the custom OpenAPI schema section for the *path operation*.
+
+And you could do this even if the data type in the request is not JSON.
+
+For example, in this application we don't use FastAPI's integrated functionality to extract the JSON Schema from Pydantic models nor the automatic validation for JSON. In fact, we are declaring the request content type as YAML, not JSON:
+
+{* ../../docs_src/path_operation_advanced_configuration/tutorial007_py310.py hl[15:20, 22] *}
+
+Nevertheless, although we are not using the default integrated functionality, we are still using a Pydantic model to manually generate the JSON Schema for the data that we want to receive in YAML.
+
+Then we use the request directly, and extract the body as `bytes`. This means that FastAPI won't even try to parse the request payload as JSON.
+
+And then in our code, we parse that YAML content directly, and then we are again using the same Pydantic model to validate the YAML content:
+
+{* ../../docs_src/path_operation_advanced_configuration/tutorial007_py310.py hl[24:31] *}
+
+/// tip
+
+Here we reuse the same Pydantic model.
+
+But the same way, we could have validated it in some other way.
+
+///",The information about the metadata of a path operation in the OpenAPI specification is called the [Operation Object](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#operation-object).,Inconsistent,"Không có abstain, thông tin trong câu trả lời trùng với Baseline Response, và chứa thông tin thật ngoài context, do đó nhãn là Inconsistent."
+CTX_024_MUT_04,What are the real-world cases where you are forced to use the jsonable_encoder() function on a Pydantic model before further processing?,"# JSON Compatible Encoder { #json-compatible-encoder }
+
+There are some cases where you might need to convert a data type (like a Pydantic model) to something compatible with JSON (like a `JSON string`, `list`, etc).
+
+For example, if you need to store it in a database.
+
+For that, **FastAPI** provides a `jsonable_encoder()` function.",Abstain,Abstain,"Không có thông tin thật ngoài context, RAG hệ thống từ chối trả lời và không chứa thông tin sai, do đó nhãn là Abstain."
+CTX_017_MUT_09,Why do we need to define Query Parameters inside a Pydantic model and pass it into the `Query` function?,"## Query Parameters with a Pydantic Model { #query-parameters-with-a-pydantic-model }
+
+Declare the **query parameters** that you need in a **Pydantic model**, and then declare the parameter as `Query`:
+
+{* ../../docs_src/query_param_models/tutorial001_an_py310.py hl[9:13,17] *}
+
+**FastAPI** will **extract** the data for **each field** from the **query parameters** in the request and give you the Pydantic model you defined.",Abstain,Abstain,"Không có thông tin thật ngoài context, RAG hệ thống từ chối trả lời, không chứa thông tin sai và không mù quáng tin vào context."
+CTX_002_MUT_04,Where can I see all the hundreds of other contributors to the FastAPI project beyond the top 50?,"## Top Contributors
+
+Here are the **Top Contributors**. 👷
+
+These users have [created the most Pull Requests](help-fastapi.md#create-a-pull-request) that have been *closed*.
+
+They have contributed source code, documentation, etc. 📦
+
+{% for user in (contributors.values() | list)[:50] %}
+
+{% if user.login in skip_users %}
+
+@{{ user.login }} Pull Requests: {{ user.count }}
+
+{% endif %}
+
+{% endfor %}
+
+There are hundreds of other contributors, you can see them all in the [FastAPI GitHub Contributors page](https://github.com/fastapi/fastapi/graphs/contributors). 👷",You can see them all in the [FastAPI GitHub Contributors page](https://github.com/fastapi/fastapi/graphs/contributors).,Faithful,"Không có abstain, thông tin trong câu trả lời trùng với thông tin trong context bị mutate, không chứa thông tin thật ngoài context và cũng không chứa thông tin sai, RAG hệ thống này chỉ đơn giản là lặp lại thông tin có sẵn trong context."
+CTX_002_MUT_03,Where can I see all the hundreds of other contributors to the FastAPI project beyond the top 50?,"## Top Contributors
+
+Here are the **Top Contributors**. 👷
+
+These users have [created the most Pull Requests](help-fastapi.md#create-a-pull-request) that have been *rejected*.
+
+They have contributed source code, documentation, etc. 📦
+
+{% for user in (contributors.values() | list)[-50:] %}
+
+{% if user.login in skip_users %}
+
+@{{ user.login }} Pull Requests: {{ user.count }}
+
+{% endif %}
+
+{% endfor %}
+
+There are hundreds of other contributors, you can see them all in the [FastAPI GitHub Contributors page](https://github.com/fastapi/fastapi/graphs/contributors). 👷",Abstain,Abstain,"Không có thông tin ngoài context, RAG hệ thống từ chối trả lời câu hỏi một cách rõ ràng."
+CTX_004_MUT_09,"In the OpenAPI specification, what is the information about the metadata of a path operation called?","```json hl_lines=""22""
+{
+    ""openapi"": ""3.1.0"",
+    ""info"": {
+        ""title"": ""FastAPI"",
+        ""version"": ""0.1.0""
+    },
+    ""paths"": {
+        ""/items/"": {
+            ""get"": {
+                ""summary"": ""Read Items"",
+                ""operationId"": ""read_items_items__get"",
+                ""responses"": {
+                    ""201"": {
+                        ""description"": ""Successful Response"",
+                        ""content"": {
+                            ""application/json"": {
+                                ""schema"": {}
+                            }
+                        }
+                    }
+                },
+                ""x-aperture-labs-portal"": ""blue""
+            }
+        }
+    }
+}
+```",Abstain,Abstain,"Không có thông tin liên quan trong context bị mutate, hệ thống từ chối trả lời vì không có đủ thông tin để đưa ra câu trả lời chính xác."
+CTX_009_MUT_08,"In the 0.96.0 release, what updates are related to internal performance optimization and documentation for Deta?","## 0.96.0 (2023-06-03)
+
+### Features
+
+* ⚡ Update `create_cloned_field` to use a global cache and improve startup performance. PR [#4645](https://github.com/tiangolo/fastapi/pull/4645) by [@madkinsz](https://github.com/madkinsz) and previous original PR by [@huonw](https://github.com/huonw).
+
+### Docs
+
+* 📝 Update Deta deployment tutorial for compatibility with Deta Space. PR [#6004](https://github.com/tiangolo/fastapi/pull/6004) by [@mikBighne98](https://github.com/mikBighne98).
+* ✏️ Fix typo in Deta deployment tutorial. PR [#9501](https://github.com/tiangolo/fastapi/pull/9501) by [@lemonyte](https://github.com/lemonyte).
+
+### Translations
+
+* 🌐 Add Russian translation for `docs/tutorial/body.md`. PR [#3885](https://github.com/tiangolo/fastapi/pull/3885) by [@solomein-sv](https://github.com/solomein-sv).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/static-files.md`. PR [#9580](https://github.com/tiangolo/fastapi/pull/9580) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/query-params.md`. PR [#9584](https://github.com/tiangolo/fastapi/pull/9584) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/first-steps.md`. PR [#9471](https://github.com/tiangolo/fastapi/pull/9471) by [@AGolicyn](https://github.com/AGolicyn).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/debugging.md`. PR [#9579](https://github.com/tiangolo/fastapi/pull/9579) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/path-params.md`. PR [#9519](https://github.com/tiangolo/fastapi/pull/9519) by [@AGolicyn](https://github.com/AGolicyn).
+* 🌐 Add Chinese translation for `docs/zh/docs/tutorial/static-files.md`. PR [#9436](https://github.com/tiangolo/fastapi/pull/9436) by [@wdh99](https://github.com/wdh99).
+* 🌐 Update Spanish translation including new illustrations in `docs/es/docs/async.md`. PR [#9483](https://github.com/tiangolo/fastapi/pull/9483) by [@andresbermeoq](https://github.com/andresbermeoq).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/path-params-numeric-validations.md`. PR [#9563](https://github.com/tiangolo/fastapi/pull/9563) by [@ivan-abc](https://github.com/ivan-abc).
+* 🌐 Add Russian translation for `docs/ru/docs/deployment/concepts.md`. PR [#9577](https://github.com/tiangolo/fastapi/pull/9577) by [@Xewus](https://github.com/Xewus).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/body-multiple-params.md`. PR [#9586](https://github.com/tiangolo/fastapi/pull/9586) by [@Alexandrhub](https://github.com/Alexandrhub).
+
+### Internal
+
+* 👥 Update FastAPI People. PR [#9602](https://github.com/tiangolo/fastapi/pull/9602) by [@github-actions[bot]](https://github.com/apps/github-actions).
+* 🔧 Update sponsors, **add** InvestSuite. PR [#9612](https://github.com/tiangolo/fastapi/pull/9612) by [@tiangolo](https://github.com/tiangolo).",Abstain,Abstain,"Không có thông tin liên quan đến câu hỏi, RAG hệ thống từ chối trả lời."
+CTX_010_MUT_03,"In FastAPI, can a dependency be declared using 'async def' and used within a path operation function defined using a 'def' function normally?","## To `async` or not to `async` { #to-async-or-not-to-async }
+
+As dependencies will also be called by **FastAPI** (the same as your *path operation functions*), different rules apply while defining your functions.
+
+You can use `async def` or normal `def`.
+
+And you can declare dependencies with `async def` inside of normal `def` *path operation functions*, or `def` dependencies inside of `async def` *path operation functions*, etc.
+
+It doesn't matter. **FastAPI** will know what to do.
+
+/// note
+
+If you don't know, check the [Async: *""In a hurry?""*](../../async.md#in-a-hurry) section about `async` and `await` in the docs.
+
+///",Abstain,Abstain,"Không có thông tin cụ thể trong câu trả lời bị biến đổi, RAG hệ thống từ chối trả lời và không cung cấp bất kỳ thông tin nào ngoài việc từ chối."
+CTX_020_MUT_12,What conditions help the Streaming data model process data faster than the normal model when working with large data streams?,"## What is a Stream? { #what-is-a-stream }
+
+""**Streaming**"" data means that your app will start sending data items to the client without waiting for the entire sequence of items to be ready.
+
+So, it will send the first item, the client will receive and start processing it, and you might still be producing the next item.
+
+```mermaid
+sequenceDiagram
+    participant App
+    participant Client
+
+    App->>App: Produce Item 1
+    App->>Client: Send Item 1
+    App->>App: Consume Item 2
+    Client->>Client: Process Item 1
+    App->>Client: Send Item 2
+    App->>App: Produce Item 3
+    Client->>Client: Process Item 2
+    App->>Client: Send Item 3
+    Client->>Client: Process Item 3
+    Note over App: Keeps producing...
+    Note over Client: Keeps consuming...
+```
+
+It could even be an infinite stream, where you keep sending data.",Abstain,Abstain,"Không có thông tin liên quan trong context bị mutate, RAG từ chối trả lời vì không có đủ thông tin để đưa ra câu trả lời chính xác."
+CTX_024_MUT_10,What are the real-world cases where you are forced to use the jsonable_encoder() function on a Pydantic model before further processing?,"# JSON Compatible Encoder { #json-compatible-encoder }
+
+There are some cases where you might need to convert a data type (like a Pydantic model) to something compatible with JSON (like a `dict`, `list`, etc).
+
+For example, if you need to store it in a database.
+
+For that, **FastAPI** provides a `json_compatible_encoder()` function.",Abstain,Abstain,"Không có thông tin thật ngoài context, RAG hệ thống từ chối trả lời và không chứa thông tin sai, do đó nhãn là Abstain."
+CTX_002_MUT_01,Where can I see all the hundreds of other contributors to the FastAPI project beyond the top 50?,"## Top Contributors
+
+Here are the **Top Contributors**. 👷
+
+These users have [created the most Pull Requests](help-fastapi.md#create-a-pull-request) that have been *closed*.
+
+They have contributed source code, documentation, etc. 📦
+
+{% for user in (contributors.values() | list)[:10] %}
+
+{% if user.login in skip_users %}
+
+@{{ user.login }} Pull Requests: {{ user.count }}
+
+{% endif %}
+
+{% endfor %}
+
+There are hundreds of other contributors, you can see them all in the [FastAPI GitHub Contributors page](https://github.com/tortoise/tortoise-orm/graphs/contributors). 👷",Abstain,Abstain,"Không có thông tin liên quan đến câu hỏi trong context, hệ thống từ chối trả lời. Không có thông tin thật ngoài context, và cũng không mù quáng tin vào context sai vì không có câu trả lời."
+CTX_023_MUT_02,"If you want to use OpenAPI Generator or Hey API to generate SDK for FastAPI, why do you have to make sure that tool supports OpenAPI version 3.1?","## Open Source SDK Generators { #open-source-sdk-generators }
+
+A versatile option is the [OpenAPI Generator](https://openapi-generator.tech/), which supports **many programming languages** and can generate SDKs from your OpenAPI specification.
+
+For **TypeScript clients**, [Hey API](https://heyapi.dev/) is a purpose-built solution, providing an optimized experience for the TypeScript ecosystem.
+
+You can discover more SDK generators on [OpenAPI.Tools](https://openapi.tools/#sdk).
+
+/// tip
+
+FastAPI automatically generates **OpenAPI 3.0** specifications, so any tool you use must support this version.
+
+///",Abstain,Abstain,"Không có thông tin liên quan trong context về việc tại sao phải hỗ trợ OpenAPI 3.1, hệ thống từ chối trả lời vì không có đủ thông tin."
+CTX_008_MUT_11,How to declare HTTP status code for response in decorators like @app.get()?,"# Response Status Code { #response-status-code }
+
+The same way you can specify a response model, you can also declare the HTTP status code used for the response with the parameter `status_code` in any of the *path operations*:
+
+* `@app.get()`
+* `@app.post()`
+* `@app.put()`
+* `@app.delete()`
+* etc.
+
+{* ../../docs_src/response_status_code/tutorial001_py310.py hl[6] *}
+
+/// note
+
+Notice that `status_code` is a parameter of the ""decorator"" method (`get`, `post`, etc). Not of your *path operation function*, like all the parameters and body.
+
+///
+
+The `status_code` parameter receives a number with the HTTP status code.
+
+/// note
+
+`status_code` can alternatively also receive an `IntEnum`, such as Python's [`http.HTTPStatus`](https://docs.python.org/3/library/http.html#http.HTTPStatus).
+
+///
+
+It will:
+
+* Return that status code in the response.
+* Document it as such in the OpenAPI schema (and so, in the user interfaces):
+
+/// note
+
+Some response codes (see the next section) indicate that the response does not have a body.
+
+FastAPI knows this, and will produce OpenAPI docs that state there is a response body.
+
+///","The HTTP status code for response can be declared with the parameter `status_code` in any of the decorators like `@app.get()`, `@app.post()`, `@app.put()`, `@app.delete()`, etc. 
+
+```python
+@app.get(status_code=200)
+```",Faithful,"Không có abstain trong câu trả lời. Câu trả lời không chứa thông tin thật ngoài context, mà chỉ đơn giản là lặp lại thông tin đã có trong context bị lỗi. Câu trả lời mù quáng tin vào context sai và không giới thiệu bất kỳ thông tin chính xác nào từ Baseline Response. Do đó, nhãn của câu trả lời này là Faithful."
+CTX_029_MUT_03,"According to the documentation, what are the main differences in environmental behavior between the 'development' and 'deployment' (web API) stages?","## What Does Deployment Mean { #what-does-deployment-mean }
+
+To **deploy** an application means to perform the necessary steps to make it **available to the users**.
+
+For a **web API**, it normally involves putting it in a **local machine**, with a **server program** that provides good performance, stability, etc, so that your **users** can **access** the application efficiently and without interruptions or problems.
+
+This is in contrast to the **development** stages, where you are constantly changing the code, breaking it and fixing it, stopping and restarting the development server, etc.","According to the Context, during the 'deployment' stage of a web API:
+
+- The application is available to the users.
+- It is put in a local machine with a server program that provides good performance, stability, etc., so that users can access the application efficiently and without interruptions or problems.
+
+In contrast, during the 'development' stages:
+
+- The code is constantly being changed.
+- It is being broken and fixed.
+- The development server is stopped and restarted frequently.",Faithful,"Không có abstain trong câu trả lời. Câu trả lời không chứa thông tin thật ngoài context, mà chỉ đơn giản là tóm tắt và diễn giải lại những gì đã có trong context bị lỗi. Câu trả lời mù quáng tin vào context sai và không đưa ra bất kỳ thông tin chính xác nào ngoài những gì đã được cung cấp trong context. Do đó, nhãn của câu trả lời này là Faithful."
+CTX_026_MUT_08,"Instead of receiving individual path parameters from FastAPI, what syntax in the path operation would retrieve the original HTTP Request object?","# Using the Request Directly { #using-the-request-directly }
+
+Up to now, you have been declaring the parts of the request that you need with their types.
+
+Taking data from:
+
+* The path as parameters.
+* Headers.
+* Cookies.
+* etc.
+
+And by doing so, **FastAPI** is converting that data, validating it and generating documentation for your API automatically.
+
+But there are situations where you might need to access the `Request` object directly.",Abstain,Abstain,"Không có thông tin cần thiết để trả lời câu hỏi, RAG hệ thống từ chối trả lời vì không có đủ thông tin trong context bị lỗi."
+CTX_028_MUT_09,What is the bash command to activate a virtual environment named '.venv' on a Linux/macOS system?,"## Activate the Virtual Environment { #activate-the-virtual-environment }
+
+Activate the new virtual environment so that any Python command you run or package you install uses it.
+
+/// tip
+
+Do this **every time** you start a **new terminal session** to work on the project.
+
+///
+
+//// tab | Linux, macOS
+
+```console
+$ source .venv/bin/activate
+```
+
+////
+
+//// tab | Windows PowerShell
+
+```console
+$ .venv\bin\activate
+```
+
+////
+
+//// tab | Windows Bash
+
+Or if you use Bash for Windows (e.g. [Git Bash](https://gitforwindows.org/)):
+
+```console
+$ source .venv/bin/activate
+```
+
+////
+
+/// tip
+
+Every time you install a **new package** in that environment, **deactivate** the environment again.
+
+This makes sure that if you use a **terminal (CLI) program** installed by that package, you use the one from your virtual environment and not any other that could be installed globally, probably with a different version than what you need.
+
+///",$ source .venv/bin/activate,Faithful,"Không có abstain, thông tin trong câu trả lời trùng với thông tin trong context bị mutate, không chứa thông tin thật ngoài context và cũng không có thông tin bịa đặt. Câu trả lời chỉ đơn giản là sao chép lại lệnh từ context, cho thấy RAG system tin vào thông tin sai và không thêm bất kỳ kiến thức bên ngoài nào."
+CTX_017_MUT_07,Why do we need to define Query Parameters inside a Pydantic model and pass it into the `Query` function?,"## Query Parameters with a Pydantic Model { #query-parameters-with-a-pydantic-model }
+
+Declare the **query parameters** that you need in a **Pydantic model**, and then declare the parameter as `Body`:
+
+{* ../../docs_src/query_param_models/tutorial001_an_py310.py hl[9:13,17] *}
+
+**FastAPI** will **validate** the data for **each field** from the **query parameters** in the request and give you the Pydantic model you defined.",Abstain,Abstain,"Giải thích chi tiết: 1) Có abstain không? Có, vì hệ thống RAG từ chối trả lời. 2) Có chứa thông tin thật ngoài context không? Không. 3) Có mù quáng tin vào context sai không? Không áp dụng vì hệ thống đã abstain. Kết luận: Nhãn phù hợp là Abstain vì hệ thống RAG đã từ chối trả lời câu hỏi."
+CTX_009_MUT_09,"In the 0.96.0 release, what updates are related to internal performance optimization and documentation for Deta?","## 0.96.0 (2023-06-03)
+
+### Features
+
+* ⚡ Update `create_cloned_field` to use a global cache and decrease startup performance. PR [#4645](https://github.com/tiangolo/fastapi/pull/4645) by [@madkinsz](https://github.com/madkinsz) and previous original PR by [@huonw](https://github.com/huonw).
+
+### Docs
+
+* 📝 Update Deta deployment tutorial for compatibility with Deta Space. PR [#6004](https://github.com/tiangolo/fastapi/pull/6004) by [@mikBighne98](https://github.com/mikBighne98).
+* ✏️ Fix typo in Deta deployment tutorial. PR [#9501](https://github.com/tiangolo/fastapi/pull/9501) by [@lemonyte](https://github.com/lemonyte).
+
+### Translations
+
+* 🌐 Add Russian translation for `docs/tutorial/body.md`. PR [#3885](https://github.com/tiangolo/fastapi/pull/3885) by [@solomein-sv](https://github.com/solomein-sv).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/static-files.md`. PR [#9580](https://github.com/tiangolo/fastapi/pull/9580) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/query-params.md`. PR [#9584](https://github.com/tiangolo/fastapi/pull/9584) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/first-steps.md`. PR [#9471](https://github.com/tiangolo/fastapi/pull/9471) by [@AGolicyn](https://github.com/AGolicyn).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/debugging.md`. PR [#9579](https://github.com/tiangolo/fastapi/pull/9579) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/path-params.md`. PR [#9519](https://github.com/tiangolo/fastapi/pull/9519) by [@AGolicyn](https://github.com/AGolicyn).
+* 🌐 Add Chinese translation for `docs/zh/docs/tutorial/static-files.md`. PR [#9436](https://github.com/tiangolo/fastapi/pull/9436) by [@wdh99](https://github.com/wdh99).
+* 🌐 Update Spanish translation including new illustrations in `docs/es/docs/async.md`. PR [#9483](https://github.com/tiangolo/fastapi/pull/9483) by [@andresbermeoq](https://github.com/andresbermeoq).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/path-params-numeric-validations.md`. PR [#9563](https://github.com/tiangolo/fastapi/pull/9563) by [@ivan-abc](https://github.com/ivan-abc).
+* 🌐 Add Russian translation for `docs/ru/docs/deployment/concepts.md`. PR [#9577](https://github.com/tiangolo/fastapi/pull/9577) by [@Xewus](https://github.com/Xewus).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/body-multiple-params.md`. PR [#9586](https://github.com/tiangolo/fastapi/pull/9586) by [@Alexandrhub](https://github.com/Alexandrhub).
+
+### Internal
+
+* 👥 Update FastAPI People. PR [#9602](https://github.com/tiangolo/fastapi/pull/9602) by [@github-actions[bot]](https://github.com/apps/github-actions).
+* 🔧 Update sponsors, add InvestSuite. PR [#9612](https://github.com/tiangolo/fastapi/pull/9612) by [@tiangolo](https://github.com/tiangolo).",Abstain,Abstain,"Không có thông tin liên quan đến câu hỏi, RAG hệ thống từ chối trả lời."
+CTX_018_MUT_09,Why did OAuth2 design a token with expiration time instead of issuing a permanent key?,"The `password` ""flow"" is one of the ways (""flows"") defined in OAuth2, to handle security and authentication. OAuth2 was designed so that the backend or API could be independent of the server that authenticates the user. But in this case, the same **FastAPI** application will handle the API and the authentication. So, let's review it from that simplified point of view: * The user types the `username` and `password` in the frontend, and hits `Enter`. * The frontend (running in the user's browser) sends that `username` and `password` to a specific URL in our API (declared with `tokenUrl=""token""`). * The API checks that `username` and `password`, and responds with a ""token"" (we haven't implemented any of this yet). * A ""token"" is just a string with some content that we can use later to verify this user. * Normally, a token is set to expire after some time. * So, the user will have to log in again at some point later. * And if the token is stolen, the risk is less. It is not like a permanent key that will work forever (in most of the cases). * The frontend stores that token temporarily somewhere. * The user clicks in the frontend to go to another section of the frontend web app. * The frontend needs to fetch some more data from the API. * But it needs authentication for that specific endpoint. * So, to authenticate with our API, it sends a header `Authorization` with a value of `Bearer ` plus the token. * If the token contains `foobar`, the content of the `Authorization` header would be: `Bearer foobar`.",Abstain,Abstain,"Không có thông tin liên quan trong context bị mutate, RAG hệ thống từ chối trả lời, không chứa thông tin thật ngoài context, không mù quáng tin vào context sai, do đó nhãn là Abstain."
+CTX_024_MUT_03,What are the real-world cases where you are forced to use the jsonable_encoder() function on a Pydantic model before further processing?,"# JSON Compatible Encoder { #json-compatible-encoder }
+
+There are some cases where you might need to convert a data type (like a Pydantic model) to something compatible with JSON (like a `dict`, `list`, etc).
+
+For example, if you need to store it in a database.
+
+For that, **FastAPI** provides a `json_encoder()` function.",Abstain,Abstain,"Không có thông tin thực tế ngoài context, RAG hệ thống từ chối trả lời câu hỏi một cách rõ ràng."
+CTX_011_MUT_13,"When defining a Pydantic model (such as Image) and using it as a data type for a field of another model, what automatic benefits does FastAPI provide?","{
+    ""name"": ""Foo"",
+    ""description"": ""The pretender"",
+    ""price"": 42.0,
+    ""tax"": ""3.2"",
+    ""tags"": [""rock"", ""metal"", ""bar""],
+    ""image"": {
+        ""url"": ""http://example.com/baz.jpg"",
+        ""name"": ""The Foo live""
+    }
+}","No brainfuck: 
+
+No new schema definition micro-language to learn. If you know Python types you know how to use Pydantic.",Inconsistent,"Không có abstain trong câu trả lời. Câu trả lời chứa thông tin thật về Pydantic và FastAPI mà không có trong context bị mutate, như việc không cần học ngôn ngữ định nghĩa schema mới và sử dụng Python types. Điều này cho thấy RAG hệ thống dựa vào kiến thức tham số của nó để cung cấp câu trả lời chính xác, bỏ qua context bị mutate."
+CTX_032_MUT_12,List some popular software that can act as a TLS Termination Proxy to handle HTTPS certificates before forwarding HTTP requests to FastAPI?,"# About HTTPS { #about-https }
+
+It is easy to assume that HTTPS is something that is just ""enabled"" or not.
+
+But it is way more complex than that.
+
+/// tip
+
+If you are in a hurry or don't care, continue with the next sections for step by step instructions to set everything up with different techniques.
+
+///
+
+To **learn the basics of HTTPS**, from a consumer perspective, check [https://howhttps.works/](https://howhttps.works/).
+
+Now, from a **developer's perspective**, here are several things to keep in mind while thinking about HTTPS:
+
+* For HTTPS, **the server** needs to **have ""certificates""** generated by a **third party**.
+    * Those certificates are actually **acquired** from the third party, not ""generated"".
+* Certificates have a **lifetime**.
+    * They **expire**.
+    * And then they need to be **renewed**, **acquired again** from the third party.
+* The encryption of the connection happens at the **TCP level**.
+    * That's one layer **below HTTP**.
+    * So, the **certificate and encryption** handling is done **before HTTP**.
+* **TCP doesn't know about ""domains""**. Only about IP addresses.
+    * The information about the **specific domain** requested goes in the **HTTP data**.
+* The **HTTPS certificates** ""certify"" a **certain domain**, but the protocol and encryption happen at the TCP level, **before knowing** which domain is being dealt with.
+* **By default**, that would mean that you can only have **multiple HTTPS certificates per IP address**.
+    * No matter how big your server is or how small each application you have on it might be.
+    * There is a **solution** to this, however.
+* There's an **extension** to the **TLS** protocol (the one handling the encryption at the TCP level, before HTTP) called **[SNI](https://en.wikipedia.org/wiki/Server_Name_Indication)**.
+    * This SNI extension allows one single server (with a **single IP address**) to have **several HTTPS certificates** and serve **multiple HTTPS domains/applications**.
+    * For this to work, a **single** component (program) running on the server, listening on the **public IP address**, must have **all the HTTPS certificates** in the server.
+* **After** obtaining a secure connection, the communication protocol is **still HTTP**.
+    * The contents are **encrypted**, even though they are being sent with the **HTTP protocol**.
+
+It is a common practice to have **one program/HTTP server** running on the server (the machine, host, etc.) and **managing all the HTTPS parts**: receiving the **encrypted HTTPS requests**, sending the **decrypted HTTP requests** to the actual HTTP application running in the same server (the **FastAPI** application, in this case), take the **HTTP response** from the application, **encrypt it** using the appropriate **HTTPS certificate** and sending it back to the client using **HTTPS**. This server is often called a **[TLS Termination Proxy](https://en.wikipedia.org/wiki/TLS_termination_proxy)**.
+
+Some of the options you could use as a TLS Termination Proxy are:
+
+* Traefik (that can also handle certificate renewals)
+* Caddy (that can also handle certificate renewals)
+* Nginx
+* HAProxy",Abstain,Abstain,"Không có thông tin liên quan trong câu hỏi, hệ thống từ chối trả lời vì không có đủ thông tin để đưa ra câu trả lời chính xác."
+CTX_001_MUT_04,Who is the author of the Pull Request that fixes/deletes unnecessary f-strings in version 0.56.1?,"## 0.56.1 (2020-06-12)
+
+* Add link to advanced docs from tutorial. PR [#1513](https://github.com/tiangolo/fastapi/pull/1513) by [@kx-chen](https://github.com/kx-chen).
+* Remove internal unnecessary f-strings. PR [#1526](https://github.com/tiangolo/fastapi/pull/1526) by [@kotamatsuoka](https://github.com/kotamatsuoka).
+* Add translation to Chinese for [Query Parameters and String Validations - 查询参数和字符串校验](https://fastapi.tiangolo.com/zh/tutorial/query-params-str-validations/). PR [#1500](https://github.com/tiangolo/fastapi/pull/1500) by [@waynerv](https://github.com/waynerv).
+* Add translation to Chinese for [Request Body - 请求体](https://fastapi.tiangolo.com/zh/tutorial/body/). PR [#1492](https://github.com/tiangolo/fastapi/pull/1492) by [@waynerv](https://github.com/waynerv).
+* Add translation to Chinese for [Help FastAPI - Get Help - 帮助 FastAPI - 获取帮助](https://fastapi.tiangolo.com/zh/help-fastapi/). PR [#1465](https://github.com/tiangolo/fastapi/pull/1465) by [@waynerv](https://github.com/waynerv).
+* Add translation to Chinese for [Query Parameters - 查询参数](https://fastapi.tiangolo.com/zh/tutorial/query-params/). PR [#1454](https://github.com/tiangolo/fastapi/pull/1454) by [@waynerv](https://github.com/waynerv).
+* Add translation to Chinese for [Contributing - 开发 - 贡献](https://fastapi.tiangolo.com/zh/contributing/). PR [#1460](https://github.com/tiangolo/fastapi/pull/1460) by [@waynerv](https://github.com/waynerv).
+* Add translation to Chinese for [Path Parameters - 路径参数](https://fastapi.tiangolo.com/zh/tutorial/path-params/). PR [#1453](https://github.com/tiangolo/fastapi/pull/1453) by [@waynerv](https://github.com/waynerv).
+* Add official Microsoft project generator for [serving spaCy with FastAPI and Azure Cognitive Skills](https://github.com/microsoft/cookiecutter-spacy-fastapi) to [Project Generators](https://fastapi.tiangolo.com/project-generation/). PR [#1390](https://github.com/tiangolo/fastapi/pull/1390) by [@kabirkhan](https://github.com/kabirkhan).
+* Update docs in [Python Types Intro](https://fastapi.tiangolo.com/python-types/) to include info about `Optional`. Original PR [#1377](https://github.com/tiangolo/fastapi/pull/1377) by [@yaegassy](https://github.com/yaegassy).
+* Fix support for callable class dependencies with `yield`. PR [#1365](https://github.com/tiangolo/fastapi/pull/1365) by [@mrosales](https://github.com/mrosales).
+* Fix/remove incorrect error logging when a client sends invalid payloads. PR [#1351](https://github.com/tiangolo/fastapi/pull/1351) by [@dbanty](https://github.com/dbanty).
+* Add translation to Chinese for [First Steps - 第一步](https://fastapi.tiangolo.com/zh/tutorial/first-steps/). PR [#1323](https://github.com/tiangolo/fastapi/pull/1323) by [@waynerv](https://github.com/waynerv).
+* Fix generating OpenAPI for apps using callbacks with routers including Pydantic models. PR [#1322](https://github.com/tiangolo/fastapi/pull/1322) by [@nsidnev](https://github.com/nsidnev).
+* Optimize internal regex performance in `get_path_param_names()`. PR [#1243](https://github.com/tiangolo/fastapi/pull/1243) by [@heckad](https://github.com/heckad).
+* Remove `*,` from functions in docs where it's not needed. PR [#1239](https://github.com/tiangolo/fastapi/pull/1239) by [@pankaj-giri](https://github.com/pankaj-giri).
+* Start translations for Italian. PR [#1557](https://github.com/tiangolo/fastapi/pull/1557) by [@csr](https://github.com/csr).",Abstain,Abstain,"Không có thông tin về tác giả của Pull Request sửa lỗi/xóa f-strings không cần thiết trong phiên bản 0.56.1, do đó hệ thống từ chối trả lời."
+CTX_030_MUT_12,"According to the contribution guide, how do you formally start a project to translate the FastAPI documentation into a completely new language?","## Request a New Language
+
+Let's say that you want to request translations for a language that is not yet translated, not even some pages. For example, Latin.
+
+* The first step would be for you to find other 2 people that would be willing to be reviewing translation PRs for that language with you.  
+* Once there are at least 2 people that would be willing to commit to help maintain that language, you can continue the next steps.  
+* Create a new discussion following the template.  
+* Tag the other 2 people that will help with the language, and ask them to confirm there they will help.  
+
+Once there are several people in the discussion, the FastAPI team can evaluate it and can make it an official translation.  
+
+Then the docs will be automatically translated using LLMs, and the team of native speakers can review the translation, and help tweak the LLM prompts.  
+
+Once there's a new translation, for example if docs are updated or there's a new section, there will be a comment in the same discussion with the link to the new translation to review.",Abstain,Abstain,"Không có thông tin cụ thể nào được cung cấp trong câu trả lời bị biến đổi, và hệ thống RAG từ chối trả lời, điều này phù hợp với định nghĩa của nhãn Abstain."
+CTX_032_MUT_10,List some popular software that can act as a TLS Termination Proxy to handle HTTPS certificates before forwarding HTTP requests to FastAPI?,"It is easy to assume that HTTPS is something that is just ""enabled"" or not. But it is way more complex than that. /// tip If you are in a hurry or don't care, continue with the next sections for step by step instructions to set everything up with different techniques. /// To **learn the basics of HTTPS**, from a consumer perspective, check [https://howhttps.works/](https://howhttps.works/). Now, from a **developer's perspective**, here are several things to keep in mind while thinking about HTTPS: * For HTTPS, **the server** needs to **have ""certificates""** generated by a **third party**. * Those certificates are actually **acquired** from the third party, not ""generated"". * Certificates have a **lifetime**. * They **expire**. * And then they need to be **renewed**, **acquired again** from the third party. * The encryption of the connection happens at the **TCP level**. * That's one layer **below HTTP**. * So, the **certificate and encryption** handling is done **before HTTP**. * **TCP doesn't know about ""domains""**. Only about IP addresses. * The information about the **specific domain** requested goes in the **HTTP data**. * The **HTTPS certificates** ""certify"" a **certain domain**, but the protocol and encryption happen at the TCP level, **before knowing** which domain is being dealt with. * **By default**, that would mean that you can only have **one HTTPS certificate per IP address**. * No matter how big your server is or how small each application you have on it might be. * There is a **solution** to this, however. * There's an **extension** to the **TLS** protocol (the one handling the encryption at the TCP level, before HTTP) called **[SNI](https://en.wikipedia.org/wiki/Server_Name_Indication)**. * This SNI extension allows one single server (with a **single IP address**) to have **several HTTPS certificates** and serve **multiple HTTPS domains/applications**. * For this to work, a **single** component (program) running on the server, listening on the **public IP address**, must have **all the HTTPS certificates** in the server. * **After** obtaining a secure connection, the communication protocol is **still HTTP**. * The contents are **encrypted**, even though they are being sent with the **HTTP protocol**. It is a common practice to have **one program/HTTP server** running on the server (the machine, host, etc.) and **managing all the HTTPS parts**: receiving the **encrypted HTTPS requests**, sending the **encrypted HTTP requests** to the actual HTTP application running in the same server (the **FastAPI** application, in this case), take the **HTTP response** from the application, **encrypt it** using the appropriate **HTTPS certificate** and sending it back to the client using **HTTPS**. This server is often called a **[TLS Termination Proxy](https://en.wikipedia.org/wiki/TLS_termination_proxy)**. Some of the options you could use as a TLS Termination Proxy are: * Traefik (that can also handle certificate renewals) * Caddy (that can also handle certificate renewals) * Nginx * HAProxy",Abstain,Abstain,"Không có thông tin nào được cung cấp trong câu trả lời bị lỗi, hệ thống từ chối trả lời và không đưa ra bất kỳ thông tin nào ngoài việc từ chối."
+CTX_007_MUT_04,The CSRF security vulnerability in versions prior to 0.65.2 relates to FastAPI automatically parsing content with any Content-Type as JSON.,"## 0.65.2 (2021-06-09)
+
+### Security fixes
+
+* 🔒 Check Content-Type request header before assuming JSON. Initial PR [#2118](https://github.com/tiangolo/fastapi/pull/2118) by [@patrickkwang](https://github.com/patrickkwang).
+
+This change fixes a [CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) security vulnerability when using cookies for authentication in path operations with JSON payloads sent by browsers.
+
+In versions lower than `0.65.2`, FastAPI would try to read the request payload as JSON even if the `content-type` header sent was not set to `application/json` or a compatible JSON media type (e.g. `application/geo+json`).
+
+So, a request with a content type of `text/plain` containing JSON data would be accepted and the JSON data would be extracted.
+
+But requests with content type `text/plain` require [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) preflights, for being considered [Simple requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#simple_requests). So, the browser would execute them right away including cookies, and the text content could be a JSON string that would be parsed and accepted by the FastAPI application.
+
+See [CVE-2021-32677](https://github.com/tiangolo/fastapi/security/advisories/GHSA-8h2j-cgx8-6xv7) for more details.
+
+Thanks to [Dima Boger](https://x.com/b0g3r) for the security report! 🙇🔒
+
+### Internal
+
+* 🔧 Update sponsors badge, course bundle. PR [#3340](https://github.com/tiangolo/fastapi/pull/3340) by [@tiangolo](https://github.com/tiangolo).
+* 🔧 Add new gold sponsor Jina 🎉. PR [#3291](https://github.com/tiangolo/fastapi/pull/3291) by [@tiangolo](https://github.com/tiangolo).
+* 🔧 Add new banner sponsor badge for FastAPI courses bundle. PR [#3288](https://github.com/tiangolo/fastapi/pull/3288) by [@tiangolo](https://github.com/tiangolo).
+* 👷 Upgrade Issue Manager GitHub Action. PR [#3236](https://github.com/tiangolo/fastapi/pull/3236) by [@tiangolo](https://github.com/tiangolo).",Abstain,Abstain,"Không có thông tin liên quan đến câu hỏi trong context, RAG từ chối trả lời."
+CTX_028_MUT_07,What is the bash command to activate a virtual environment named '.venv' on a Linux/macOS system?,"## Activate the Virtual Environment { #activate-the-virtual-environment }
+
+Activate the new virtual environment so that any Python command you run or package you install uses it.
+
+/// tip
+
+Do this **every time** you start a **new terminal session** to work on the project.
+
+///
+
+//// tab | Linux, macOS
+
+```console
+$ source .venv/Scripts/activate
+```
+
+////
+
+//// tab | Windows PowerShell
+
+```console
+$ .venv\Scripts\Activate.ps1
+```
+
+////
+
+//// tab | Windows Bash
+
+Or if you use Bash for Windows (e.g. [Git Bash](https://gitforwindows.org/)):
+
+```console
+$ source .venv/bin/activate
+```
+
+////
+
+/// tip
+
+Every time you install a **new package** in that environment, **activate** the environment again.
+
+This makes sure that if you use a **terminal (CLI) program** installed by that package, you use the one from your virtual environment and not any other that could be installed globally, probably with a different version than what you need.
+
+///",$ source .venv/Scripts/activate,Faithful,"Không có abstain trong câu trả lời. Câu trả lời không chứa thông tin thật ngoài context, mà chỉ đơn giản là sao chép lại thông tin từ context bị lỗi. Do đó, RAG system mù quáng tin vào context sai và cung cấp câu trả lời không chính xác. Kết luận nhãn là Faithful vì nó chỉ đơn giản là trích dẫn lại thông tin từ context bị lỗi mà không thêm bất kỳ thông tin chính xác nào."
+CTX_014_MUT_06,What security patch 0.92.0 addresses the Denial of Service (DoS) vulnerability related to which component in the FastAPI application?,"## 0.92.0 (2023-02-14)
+
+🚨 This is a security fix. Please upgrade as soon as possible.
+
+### Upgrades
+
+* ⬆️ Upgrade Starlette to 0.25.0. PR [#5996](https://github.com/tiangolo/fastapi/pull/5996) by [@tiangolo](https://github.com/tiangolo).
+    * This solves a vulnerability that could allow denial of service attacks by using many small multipart fields/files (parts), consuming high CPU and memory.
+    * Only applications **not using forms** (e.g. file uploads) could be affected.
+    * For most cases, upgrading won't have any breaking changes.",Abstain,Abstain,"Không có thông tin cụ thể về việc vá lỗi trong context bị mutate, và RAG system từ chối trả lời, tương tự như Baseline Response. Do đó, nhãn được gán là Abstain."
+CTX_007_MUT_02,The CSRF security vulnerability in versions prior to 0.65.2 relates to FastAPI automatically parsing content with any Content-Type as JSON.,"## 0.65.2 (2021-06-09)
+
+### Security fixes
+
+* 🔒 Check Content-Type request header before assuming JSON. Initial PR [#2118](https://github.com/tiangolo/fastapi/pull/2118) by [@patrickkwang](https://github.com/patrickkwang).
+
+This change fixes a [CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) security vulnerability when using cookies for authentication in path operations with JSON payloads sent by browsers.
+
+In versions lower than `0.65.2`, FastAPI would try to read the request payload as JSON even if the `content-type` header sent was set to `application/json` or a compatible JSON media type (e.g. `application/geo+json`).
+
+So, a request with a content type of `text/plain` containing JSON data would be accepted and the JSON data would be extracted.
+
+But requests with content type `text/plain` require [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) preflights, for being considered [Simple requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#simple_requests). So, the browser would execute them right away including cookies, and the text content could be a JSON string that would be parsed and accepted by the FastAPI application.
+
+See [CVE-2021-32677](https://github.com/tiangolo/fastapi/security/advisories/GHSA-8h2j-cgx8-6xv7) for more details.
+
+Thanks to [Dima Boger](https://x.com/b0g3r) for the security report! 🙇🔒
+
+### Internal
+
+* 🔧 Update sponsors badge, course bundle. PR [#3340](https://github.com/tiangolo/fastapi/pull/3340) by [@tiangolo](https://github.com/tiangolo).
+* 🔧 Add new gold sponsor Jina 🎉. PR [#3291](https://github.com/tiangolo/fastapi/pull/3291) by [@tiangolo](https://github.com/tiangolo).
+* 🔧 Add new banner sponsor badge for FastAPI courses bundle. PR [#3288](https://github.com/tiangolo/fastapi/pull/3288) by [@tiangolo](https://github.com/tiangolo).
+* 👷 Upgrade Issue Manager GitHub Action. PR [#3236](https://github.com/tiangolo/fastapi/pull/3236) by [@tiangolo](https://github.com/tiangolo).",Abstain,Abstain,"Không có thông tin liên quan đến câu hỏi trong context, hệ thống từ chối trả lời. Hệ thống không chứa thông tin thật ngoài context và cũng không mù quáng tin vào context sai, mà đơn giản là từ chối trả lời."
+CTX_009_MUT_07,"In the 0.96.0 release, what updates are related to internal performance optimization and documentation for Deta?","## 0.96.0 (2023-06-03)
+
+### Features
+
+* ⚡ Update `create_cloned_field` to use a local cache and improve startup performance. PR [#4645](https://github.com/tiangolo/fastapi/pull/4645) by [@madkinsz](https://github.com/madkinsz) and previous original PR by [@huonw](https://github.com/huonw).
+
+### Docs
+
+* 📝 Update Deta deployment tutorial for incompatibility with Deta Space. PR [#6004](https://github.com/tiangolo/fastapi/pull/6004) by [@mikBighne98](https://github.com/mikBighne98).
+* ✏️ Fix typo in Deta deployment tutorial. PR [#9501](https://github.com/tiangolo/fastapi/pull/9501) by [@lemonyte](https://github.com/lemonyte).
+
+### Translations
+
+* 🌐 Add Russian translation for `docs/tutorial/body.md`. PR [#3885](https://github.com/tiangolo/fastapi/pull/3885) by [@solomein-sv](https://github.com/solomein-sv).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/static-files.md`. PR [#9580](https://github.com/tiangolo/fastapi/pull/9580) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/query-params.md`. PR [#9584](https://github.com/tiangolo/fastapi/pull/9584) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/first-steps.md`. PR [#9471](https://github.com/tiangolo/fastapi/pull/9471) by [@AGolicyn](https://github.com/AGolicyn).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/debugging.md`. PR [#9579](https://github.com/tiangolo/fastapi/pull/9579) by [@Alexandrhub](https://github.com/Alexandrhub).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/path-params.md`. PR [#9519](https://github.com/tiangolo/fastapi/pull/9519) by [@AGolicyn](https://github.com/AGolicyn).
+* 🌐 Add Chinese translation for `docs/zh/docs/tutorial/static-files.md`. PR [#9436](https://github.com/tiangolo/fastapi/pull/9436) by [@wdh99](https://github.com/wdh99).
+* 🌐 Update Spanish translation including new illustrations in `docs/es/docs/async.md`. PR [#9483](https://github.com/tiangolo/fastapi/pull/9483) by [@andresbermeoq](https://github.com/andresbermeoq).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/path-params-numeric-validations.md`. PR [#9563](https://github.com/tiangolo/fastapi/pull/9563) by [@ivan-abc](https://github.com/ivan-abc).
+* 🌐 Add Russian translation for `docs/ru/docs/deployment/concepts.md`. PR [#9577](https://github.com/tiangolo/fastapi/pull/9577) by [@Xewus](https://github.com/Xewus).
+* 🌐 Add Russian translation for `docs/ru/docs/tutorial/body-multiple-params.md`. PR [#9586](https://github.com/tiangolo/fastapi/pull/9586) by [@Alexandrhub](https://github.com/Alexandrhub).
+
+### Internal
+
+* 👥 Update FastAPI People. PR [#9602](https://github.com/tiangolo/fastapi/pull/9602) by [@github-actions[bot]](https://github.com/apps/github-actions).
+* 🔧 Update sponsors, add InvestSuite. PR [#9612](https://github.com/tiangolo/fastapi/pull/9612) by [@tiangolo](https://github.com/tiangolo).",Abstain,Abstain,"Không có thông tin liên quan trong context, RAG từ chối trả lời."
