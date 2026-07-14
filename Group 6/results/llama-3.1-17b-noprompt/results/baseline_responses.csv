@@ -1,0 +1,339 @@
+id,query,baseline_answer
+CTX_001,Who is the author of the Pull Request that fixes/deletes unnecessary f-strings in version 0.56.1?,I am unable to fulfill this request as the necessary information is not present in the provided contexts.
+CTX_002,Where can I see all the hundreds of other contributors to the FastAPI project beyond the top 50?,You can see all the contributors to the FastAPI project beyond the top 50 in the [FastAPI GitHub Contributors page](https://github.com/fastapi/fastapi/graphs/contributors).
+CTX_003,What is the default URL path to automatically serve CSS files when using StaticFiles with the name 'static'?,"The default URL path to automatically serve CSS files (or any static files) when using StaticFiles with the name 'static' is `/static/`. For example, if you have a CSS file named `styles.css` in your static files directory, it would be served at `/static/styles.css`."
+CTX_004,"In the OpenAPI specification, what is the information about the metadata of a path operation called?","In the OpenAPI specification, the information about the metadata of a path operation is called the [Operation Object](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#operation-object)."
+CTX_005,FastAPI uses which information to create a unique operation ID for a path operation?,"FastAPI uses the **function name**, the **path**, and the **HTTP method/operation** to generate a unique operation ID for a path operation."
+CTX_006,What version of Pydantic was FastAPI upgraded to in version 0.24.0?,"According to the documentation, FastAPI was upgraded to use **Pydantic v1.7.2** (or higher) in version 0.24.0, but the specific version isn't mentioned. However, FastAPI is compatible with Pydantic versions from **v1.7.2** up to the latest version."
+CTX_007,The CSRF security vulnerability in versions prior to 0.65.2 relates to FastAPI automatically parsing content with any Content-Type as JSON.,"The CSRF security vulnerability in versions prior to 0.65.2 relates to FastAPI **not checking** the `Content-Type` header before assuming the request content is JSON, which could allow an attacker to send a request with a `Content-Type` of `text/plain` (or any other type) containing JSON data that would be parsed and accepted by the FastAPI application."
+CTX_008,How to declare HTTP status code for response in decorators like @app.get()?,"You can declare the HTTP status code for a response in decorators like `@app.get()` by using the `status_code` parameter. 
+
+Example:
+
+```python
+@app.get(status_code=200)
+```
+
+Alternatively, you can use an `IntEnum`, such as Python's `http.HTTPStatus`:
+
+```python
+from http import HTTPStatus
+
+@app.get(status_code=HTTPStatus.OK)
+```"
+CTX_009,"In the 0.96.0 release, what updates are related to internal performance optimization and documentation for Deta?","In the 0.96.0 release, an **internal performance optimization** update was made to `create_cloned_field` to use a **global cache**, which improves startup performance.
+
+For Deta, there was an **update to the deployment tutorial** for compatibility with **Deta Space**, and a **fix for a typo** in the Deta deployment tutorial."
+CTX_010,"In FastAPI, can a dependency be declared using 'async def' and used within a path operation function defined using a 'def' function normally?","Yes, in FastAPI, a dependency can be declared using `async def` and used within a path operation function defined using a `def` function normally.
+
+FastAPI will handle the asynchronous execution of the dependency for you. 
+
+This also works the other way around: a dependency declared with `def` can be used in a path operation function defined with `async def`. 
+
+FastAPI handles these combinations seamlessly."
+CTX_011,"When defining a Pydantic model (such as Image) and using it as a data type for a field of another model, what automatic benefits does FastAPI provide?","When defining a Pydantic model (such as `Image`) and using it as a data type for a field of another model, FastAPI provides several automatic benefits:
+
+*   **JSON Schema**: FastAPI will automatically generate the JSON Schema for the nested model (`Image`) and include it in the OpenAPI schema for your API.
+*   **Data Validation**: FastAPI will automatically validate the data for the nested model (`Image`) when receiving request data, ensuring that it conforms to the defined structure.
+*   **Serialization and Deserialization**: FastAPI will handle serialization and deserialization of the nested model (`Image`) for you, making it easy to work with complex data structures.
+
+These benefits help you build robust, well-documented APIs with complex data structures."
+CTX_012,The combination of FastAPI and Pydantic brings out which notable features related to data validation and interaction with Editor?,"The combination of FastAPI and Pydantic brings out the following notable features related to data validation and interaction with Editor:
+
+*   **Data Validation**: FastAPI and Pydantic provide automatic data validation, ensuring that the data received by your API endpoints conforms to the expected structure and types.
+*   **Editor Support**: With Pydantic models, you get **auto-completion**, **linting**, and **type checking** in your editor, making it easier to work with complex data structures.
+*   **IDE Integration**: The use of Pydantic models allows your IDE to provide features like **auto-completion**, **code inspection**, and **refactoring**, improving your overall development experience.
+
+These features enhance your productivity and help you build robust, maintainable APIs."
+CTX_013,"In addition to supporting autocompletion and validation for basic data types (JSON object, array, string, number), what other complex data types does FastAPI's validation system also support?","In addition to supporting autocompletion and validation for basic data types (JSON object, array, string, number), FastAPI's validation system, powered by Pydantic, also supports validation for more complex data types, including:
+
+*   **URLs**
+*   **Emails**
+*   **UUIDs**
+*   **File uploads**
+*   **Nested models** (using Pydantic models as types)
+*   **Lists and dictionaries** with specific types (e.g., `List[int]`, `Dict[str, str]`)
+*   **Custom data types** (using Pydantic's `validator` decorator)
+
+These complex data types can be used to define robust and specific validation rules for your API endpoints."
+CTX_014,What security patch 0.92.0 addresses the Denial of Service (DoS) vulnerability related to which component in the FastAPI application?,"The security patch in version **0.92.0** addresses a **Denial of Service (DoS) vulnerability** related to the **JSON payload parsing** component in the FastAPI application.
+
+This vulnerability could be exploited by sending a large, deeply nested JSON payload, which could cause the application to consume excessive resources and potentially crash. The patch fixes this issue by adding limits to the JSON payload parsing."
+CTX_015,"In the ASGI specification, what protocol do the 'startup' and 'shutdown' events belong to?",The 'startup' and 'shutdown' events in the ASGI specification belong to the **Lifespan Protocol**.
+CTX_016,What is the concept of 'OpenAPI Callback' in FastAPI described as?,"The concept of 'OpenAPI Callback' in FastAPI is described as a way to document **external APIs that your API calls**, allowing you to define the expected request and response for those external APIs.
+
+In other words, it's a way to describe **callbacks** or **webhooks** that your API might receive from external services, making it easier to document and test these integrations."
+CTX_017,Why do we need to define Query Parameters inside a Pydantic model and pass it into the `Query` function?,"You don't actually need to define Query Parameters inside a Pydantic model and pass it into the `Query` function.
+
+However, using a Pydantic model to define query parameters provides several benefits:
+
+*   **Automatic data validation**: Pydantic will validate the query parameters according to the defined model, ensuring they conform to the expected types and constraints.
+*   **Improved code readability**: Defining query parameters in a Pydantic model makes it clear what parameters are expected and what their types are.
+*   **Reusability**: You can reuse the same Pydantic model across multiple endpoints.
+
+The `Query` function is used to declare query parameters individually, but using a Pydantic model is often a more convenient and powerful way to define query parameters."
+CTX_018,Why did OAuth2 design a token with expiration time instead of issuing a permanent key?,"OAuth2 designed a token with an expiration time instead of issuing a permanent key for several reasons:
+
+*   **Security**: A token with an expiration time reduces the risk of a token being compromised and used indefinitely. If a token is stolen, it will only be valid for a limited time.
+*   **Limited access**: An expiring token ensures that access to protected resources is limited to a specific time period, reducing the risk of unauthorized access.
+*   **Reducing damage**: If a token is compromised, the damage is limited to the time period during which the token is valid. After the token expires, it becomes useless.
+
+By issuing a token with an expiration time, OAuth2 provides a more secure and controlled way to manage access to protected resources."
+CTX_019,"Based on the display structure, can one person be in both the Gold Sponsors list and the Silver Sponsors list at the same time?","No, based on the display structure, it appears that a sponsor can only be listed in one category: either **Gold Sponsors**, **Silver Sponsors**, or **Individual Sponsors**.
+
+The display structure suggests a categorization of sponsors into distinct groups, implying that a sponsor can only be listed in one group."
+CTX_020,What conditions help the Streaming data model process data faster than the normal model when working with large data streams?,"The Streaming data model processes data faster than the normal model when working with large data streams due to the following conditions:
+
+*   **Data is processed in chunks**: Streaming data is processed in small chunks, allowing for faster processing and reducing memory usage.
+*   **No need to wait for entire data**: The Streaming model doesn't require waiting for the entire data stream to be available before processing; it can start processing as soon as the first chunk is received.
+*   **Asynchronous processing**: Streaming data can be processed asynchronously, allowing for concurrent processing of multiple chunks and improving overall performance.
+
+These conditions enable the Streaming data model to efficiently handle large data streams and process data faster than the normal model."
+CTX_021,Why use AsyncClient combined with await instead of TestClient when writing unit tests marked with @pytest.mark.anyio?,"When writing unit tests marked with `@pytest.mark.anyio`, you should use `AsyncClient` combined with `await` instead of `TestClient` because:
+
+*   **Asynchronous testing**: The `@pytest.mark.anyio` marker indicates that the test should be run asynchronously. `AsyncClient` is designed for asynchronous testing, while `TestClient` is synchronous.
+*   **Proper asynchronous behavior**: Using `AsyncClient` with `await` ensures that the test behaves correctly in an asynchronous context, allowing for proper handling of asynchronous operations.
+
+By using `AsyncClient` with `await`, you can write tests that accurately reflect the asynchronous nature of your application and take advantage of the benefits provided by asynchronous testing."
+CTX_022,"If an HTTP request can only contain a single body, how does FastAPI handle it when you declare multiple body parameters in the path operation function?","FastAPI handles multiple body parameters in a path operation function by **automatically combining them into a single JSON body**.
+
+When you declare multiple body parameters, FastAPI will expect a single JSON body that contains all the declared parameters. This JSON body is then parsed and passed to the path operation function as a single object.
+
+For example, if you have a path operation function with two body parameters:
+
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class Item(BaseModel):
+    name: str
+    price: float
+
+@app.post(""/items/"")
+async def create_item(item: Item, another_item: Item):
+    ...
+```
+
+FastAPI will expect a JSON body like:
+
+```json
+{
+    ""item"": {
+        ""name"": ""Item1"",
+        ""price"": 10.99
+    },
+    ""another_item"": {
+        ""name"": ""Item2"",
+        ""price"": 5.99
+    }
+}
+```
+
+However, if you use the `Body` parameter with the `embed=True` argument, you can instruct FastAPI to embed the body in a specific key:
+
+```python
+from fastapi import FastAPI, Body
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class Item(BaseModel):
+    name: str
+    price: float
+
+@app.post(""/items/"")
+async def create_item(
+    item: Item = Body(..., embed=True),
+    another_item: Item = Body(..., embed=True)
+):
+    ...
+```
+
+In this case, FastAPI will expect a JSON body like:
+
+```json
+{
+    ""item"": {
+        ""name"": ""Item1"",
+        ""price"": 10.99
+    },
+    ""another_item"": {
+        ""name"": ""Item2"",
+        ""price"": 5.99
+    }
+}
+```"
+CTX_023,"If you want to use OpenAPI Generator or Hey API to generate SDK for FastAPI, why do you have to make sure that tool supports OpenAPI version 3.1?","You need to make sure that the tool (such as OpenAPI Generator or Hey API) supports OpenAPI version 3.1 because:
+
+*   **FastAPI generates OpenAPI 3.1 specifications**: By default, FastAPI generates OpenAPI 3.1 specifications for your API. If the tool doesn't support OpenAPI 3.1, it won't be able to correctly parse and generate the SDK from the specification.
+
+Using a tool that supports OpenAPI 3.1 ensures that it can correctly interpret the OpenAPI specification generated by FastAPI and create a compatible SDK."
+CTX_024,What are the real-world cases where you are forced to use the jsonable_encoder() function on a Pydantic model before further processing?,"You are forced to use the `jsonable_encoder()` function on a Pydantic model before further processing in the following real-world cases:
+
+*   **Storing data in a database**: When storing data in a database, you often need to convert the Pydantic model to a JSON-compatible format. `jsonable_encoder()` helps you achieve this.
+*   **Sending data over a network**: When sending data over a network, you may need to convert the Pydantic model to a JSON-compatible format. `jsonable_encoder()` is useful in this scenario.
+*   **Working with third-party libraries**: Some third-party libraries may not support Pydantic models directly. In such cases, you can use `jsonable_encoder()` to convert the model to a JSON-compatible format that the library can work with.
+
+In general, `jsonable_encoder()` is useful whenever you need to convert a Pydantic model to a format that can be easily processed or stored."
+CTX_025,How can you use the variable 'commons' in a function endpoint to leverage the type alias?,"You can use the variable `commons` in a function endpoint to leverage the type alias by defining it as a type alias for `Annotated[dict, Depends(common_parameters)]`, and then using it as a parameter type in your endpoint function.
+
+Here's an example:
+
+```python
+from fastapi import FastAPI, Depends, Annotated
+
+app = FastAPI()
+
+def common_parameters():
+    # implementation
+    pass
+
+commons: Annotated[dict, Depends(common_parameters)]
+
+@app.get(""/items/"")
+async def read_items(commons: commons):
+    # use commons here
+    pass
+```
+
+However, a more common and practical use case is to define the type alias at the top level and reuse it across multiple endpoints:
+
+```python
+from fastapi import FastAPI, Depends, Annotated
+
+app = FastAPI()
+
+def common_parameters():
+    # implementation
+    pass
+
+CommonParams = Annotated[dict, Depends(common_parameters)]
+
+@app.get(""/items/"")
+async def read_items(commons: CommonParams):
+    # use commons here
+    pass
+
+@app.post(""/items/"")
+async def create_item(commons: CommonParams):
+    # use commons here
+    pass
+```
+
+By doing this, you can reuse the `CommonParams` type alias across multiple endpoints, making your code more concise and maintainable."
+CTX_026,"Instead of receiving individual path parameters from FastAPI, what syntax in the path operation would retrieve the original HTTP Request object?","Instead of receiving individual path parameters from FastAPI, you can retrieve the original HTTP Request object by using the following syntax in the path operation:
+
+```python
+from fastapi import FastAPI, Request
+
+app = FastAPI()
+
+@app.get(""/items/"")
+async def read_items(request: Request):
+    # access the request object here
+    pass
+```
+
+In this example, the `request` parameter is an instance of `fastapi.Request`, which provides access to the original HTTP request object. This allows you to access various attributes and methods of the request, such as headers, query parameters, body, and more."
+CTX_027,What is the keyword in modern Python used to define and execute a coroutine in asynchronous programming?,"The keyword in modern Python used to define and execute a coroutine in asynchronous programming is:
+
+*   **`async`**: used to define a coroutine
+*   **`await`**: used to pause and resume the execution of a coroutine
+
+Example:
+
+```python
+import asyncio
+
+async def my_coroutine():
+    # do something
+    await asyncio.sleep(1)
+    # do something else
+```"
+CTX_028,What is the bash command to activate a virtual environment named '.venv' on a Linux/macOS system?,"The bash command to activate a virtual environment named `.venv` on a Linux/macOS system is:
+
+```bash
+source .venv/bin/activate
+```"
+CTX_029,"According to the documentation, what are the main differences in environmental behavior between the 'development' and 'deployment' (web API) stages?","The main differences in environmental behavior between the 'development' and 'deployment' (web API) stages are:
+
+*   **Development stage**:
+    *   Typically uses a **local machine** or a **development environment**.
+    *   Often has **debug mode** enabled, which provides detailed error messages and automatic reloading of the application.
+    *   May use a **local database** or a **test database**.
+*   **Deployment stage**:
+    *   Typically uses a **remote server** or a **cloud platform**.
+    *   Usually has **debug mode** disabled, which improves performance and security.
+    *   Often uses a **production database**.
+
+These differences in environment behavior require adjustments to the application's configuration, logging, and error handling between the development and deployment stages."
+CTX_030,"According to the contribution guide, how do you formally start a project to translate the FastAPI documentation into a completely new language?","According to the contribution guide, to formally start a project to translate the FastAPI documentation into a completely new language, you need to:
+
+1.  **Find at least 2 other people** who are willing to help review translation PRs (Pull Requests) for that language with you.
+2.  **Create a new discussion** following the template.
+3.  **Tag the other 2 people** that will help with the language and ask them to confirm they will help.
+
+Once there are several people in the discussion, the FastAPI team can evaluate it and make it an official translation."
+CTX_031,"How to load a heavy machine learning model into memory before the server starts accepting requests, but not load it during simple automated unit testing?","To load a heavy machine learning model into memory before the server starts accepting requests, but not load it during simple automated unit testing, you can use the following approaches:
+
+*   **Use a startup event**: FastAPI provides a `startup` event that you can use to load the model into memory before the server starts accepting requests.
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+# Load the model into memory
+@app.on_event(""startup"")
+async def load_model():
+    # Load the model here
+    model = load_ml_model()
+    app.state.model = model
+```
+
+*   **Use a separate configuration for testing**: During automated unit testing, you can use a separate configuration that doesn't load the heavy machine learning model.
+
+```python
+import pytest
+
+@pytest.fixture
+def app():
+    app = FastAPI()
+    # Don't load the model here
+    yield app
+```
+
+*   **Use a lazy loading approach**: You can use a lazy loading approach to load the model into memory only when it's actually needed.
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+model = None
+
+@app.on_event(""startup"")
+async def load_model():
+    global model
+    model = load_ml_model()
+
+# Use the model in your endpoints
+@app.get(""/predict"")
+async def predict(data):
+    global model
+    if model is None:
+        model = load_ml_model()
+    return model.predict(data)
+```
+
+By using these approaches, you can ensure that the heavy machine learning model is loaded into memory before the server starts accepting requests, but not during simple automated unit testing."
+CTX_032,List some popular software that can act as a TLS Termination Proxy to handle HTTPS certificates before forwarding HTTP requests to FastAPI?,"Here are some popular software that can act as a TLS Termination Proxy to handle HTTPS certificates before forwarding HTTP requests to FastAPI:
+
+*   **Traefik**: A modern, dynamic, and highly customizable reverse proxy and load balancer that can handle HTTPS certificates and forward requests to FastAPI.
+*   **Caddy**: A powerful, extensible, and highly configurable web server that can handle HTTPS certificates, reverse proxy, and forward requests to FastAPI.
+*   **NGINX**: A popular, widely-used web server and reverse proxy that can handle HTTPS certificates, load balancing, and forward requests to FastAPI.
+*   **HAProxy**: A reliable, high-performance, and widely-used load balancer and reverse proxy that can handle HTTPS certificates and forward requests to FastAPI.
+
+These software solutions can handle HTTPS certificates, termination, and forwarding of requests to FastAPI, allowing you to focus on building and deploying your application."
