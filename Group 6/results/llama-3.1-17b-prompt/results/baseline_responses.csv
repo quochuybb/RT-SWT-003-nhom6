@@ -1,0 +1,72 @@
+id,query,baseline_answer
+CTX_001,Who is the author of the Pull Request that fixes/deletes unnecessary f-strings in version 0.56.1?,Abstain
+CTX_002,Where can I see all the hundreds of other contributors to the FastAPI project beyond the top 50?,You can see all the contributors in the FastAPI GitHub Contributors page.
+CTX_003,What is the default URL path to automatically serve CSS files when using StaticFiles with the name 'static'?,/static/
+CTX_004,"In the OpenAPI specification, what is the information about the metadata of a path operation called?",Abstain
+CTX_005,FastAPI uses which information to create a unique operation ID for a path operation?,"the **function name**, the **path**, and the **HTTP method/operation**"
+CTX_006,What version of Pydantic was FastAPI upgraded to in version 0.24.0?,Abstain
+CTX_007,The CSRF security vulnerability in versions prior to 0.65.2 relates to FastAPI automatically parsing content with any Content-Type as JSON.,False
+CTX_008,How to declare HTTP status code for response in decorators like @app.get()?,by using the `status_code` parameter
+CTX_009,"In the 0.96.0 release, what updates are related to internal performance optimization and documentation for Deta?","* Update `create_cloned_field` to use a global cache and improve startup performance.
+* Update Deta deployment tutorial for compatibility with Deta Space.
+* Fix typo in Deta deployment tutorial."
+CTX_010,"In FastAPI, can a dependency be declared using 'async def' and used within a path operation function defined using a 'def' function normally?",Yes
+CTX_011,"When defining a Pydantic model (such as Image) and using it as a data type for a field of another model, what automatic benefits does FastAPI provide?",Abstain
+CTX_012,The combination of FastAPI and Pydantic brings out which notable features related to data validation and interaction with Editor?,"* Editor support (completion, etc.), even for nested models
+* Data conversion
+* Data validation 
+* Plays nicely with your **IDE/linter/brain** 
+* Auto-completion, linting, mypy and your intuition should all work properly with your validated data."
+CTX_013,"In addition to supporting autocompletion and validation for basic data types (JSON object, array, string, number), what other complex data types does FastAPI's validation system also support?","* Hierarchical Pydantic models
+* Python `typing`’s `List` 
+* Python `typing`’s `Dict` 
+* URL
+* Email
+* UUID
+* ...and others."
+CTX_014,What security patch 0.92.0 addresses the Denial of Service (DoS) vulnerability related to which component in the FastAPI application?,Abstain
+CTX_015,"In the ASGI specification, what protocol do the 'startup' and 'shutdown' events belong to?",Lifespan Protocol
+CTX_016,What is the concept of 'OpenAPI Callback' in FastAPI described as?,the process that happens when your API app calls the external API.
+CTX_017,Why do we need to define Query Parameters inside a Pydantic model and pass it into the `Query` function?,Abstain
+CTX_018,Why did OAuth2 design a token with expiration time instead of issuing a permanent key?,"So, the risk (of someone stealing the token) is less. It is not like a permanent key that will work forever (in most cases)."
+CTX_019,"Based on the display structure, can one person be in both the Gold Sponsors list and the Silver Sponsors list at the same time?",Abstain
+CTX_020,What conditions help the Streaming data model process data faster than the normal model when working with large data streams?,Abstain
+CTX_021,Why use AsyncClient combined with await instead of TestClient when writing unit tests marked with @pytest.mark.anyio?,Because you are writing **asynchronous** tests.
+CTX_022,"If an HTTP request can only contain a single body, how does FastAPI handle it when you declare multiple body parameters in the path operation function?","FastAPI will handle it, give you the correct data in your function, and validate and document the correct schema in the *path operation*."
+CTX_023,"If you want to use OpenAPI Generator or Hey API to generate SDK for FastAPI, why do you have to make sure that tool supports OpenAPI version 3.1?",Because FastAPI automatically generates **OpenAPI 3.1** specifications.
+CTX_024,What are the real-world cases where you are forced to use the jsonable_encoder() function on a Pydantic model before further processing?,"When you need to convert a Pydantic model to a JSON-compatible data structure (like a `dict`, `list`, etc.). For example, to store it in a database."
+CTX_025,How can you use the variable 'commons' in a function endpoint to leverage the type alias?,"You can use it as a type hint for a function parameter, like this: 
+
+```python
+commons: Annotated[dict, Depends(common_parameters)]
+``` 
+
+can be replaced with 
+
+```python
+commons: commons
+```"
+CTX_026,"Instead of receiving individual path parameters from FastAPI, what syntax in the path operation would retrieve the original HTTP Request object?","Using the `Request` object directly: 
+
+```python
+from fastapi import Request
+
+@app.get(""/items/"")
+async def read_items(request: Request):
+```"
+CTX_027,What is the keyword in modern Python used to define and execute a coroutine in asynchronous programming?,`async` and `await`
+CTX_028,What is the bash command to activate a virtual environment named '.venv' on a Linux/macOS system?,`source .venv/bin/activate`
+CTX_029,"According to the documentation, what are the main differences in environmental behavior between the 'development' and 'deployment' (web API) stages?","In **development**: 
+
+* You are constantly **changing** the code, **breaking** it and **fixing** it, **stopping** and **restarting** the **development server**, etc. 
+ 
+In **deployment** (a web API): 
+
+* You put it in a **remote machine**, with a **server program** that provides good **performance**, **stability**, etc. 
+* So that your **users** can **access** the application **efficiently** and without **interruptions** or **problems**."
+CTX_030,"According to the contribution guide, how do you formally start a project to translate the FastAPI documentation into a completely new language?","Find 2 more people willing to review translation PRs, then create a new discussion following the template and tag the 2 people."
+CTX_031,"How to load a heavy machine learning model into memory before the server starts accepting requests, but not load it during simple automated unit testing?",Abstain
+CTX_032,List some popular software that can act as a TLS Termination Proxy to handle HTTPS certificates before forwarding HTTP requests to FastAPI?,"* Traefik 
+* Caddy 
+* Nginx 
+* HAProxy"
