@@ -1,0 +1,152 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% Title page details
+\title[RAG Semantic Poisoning]{Evaluating RAG Under Adversarial Data at Scale}
+\subtitle{The Inverse Scaling Law of Semantic Poisoning \\ and the Dynamics of LLM-as-a-Judge}
+\author[Nguyen et al.]{Nguyen Quoc Huy \and Bui Le Tan Dat \and Nguyen Dang Khoa \and Le Dinh Quy}
+\institute[FPT University]{
+  FPT University \\
+  \medskip
+  \textit{Supervisor: Le Thi Quynh Chi}
+}
+\date{\today}
+
+\begin{document}
+
+% Slide 1: Title
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Slide 2: Introduction
+\begin{frame}{Introduction}
+  \begin{itemize}
+    \item \textbf{Background:} Retrieval-Augmented Generation (RAG) significantly reduces hallucinations by grounding Large Language Models (LLMs) in retrieved documents.
+    \vspace{0.3cm}
+    \item \textbf{The Vulnerability:} What happens when the retrieved documents are corrupted or semantically mutated? This creates a conflict between the LLM's parametric memory and the corrupted context.
+    \vspace{0.3cm}
+    \item \textbf{Objective:} Empirically evaluate RAG systems using 416 AI-generated semantic mutations to understand defensive behaviors and scaling laws.
+  \end{itemize}
+\end{frame}
+
+% Slide 3: Methodology
+\begin{frame}{Methodology}
+  \begin{itemize}
+    \item \textbf{Dataset:} 416 semantic mutations altering factual claims, numbers, and code.
+    \begin{itemize}
+      \item \textit{Public Data:} FastAPI documentation.
+      \item \textit{Private Data:} Internal system documentation (no pretraining exposure).
+    \end{itemize}
+    \vspace{0.2cm}
+    \item \textbf{Models Evaluated:} Llama 3.1 8B vs. 17B.
+    \vspace{0.2cm}
+    \item \textbf{Configurations:} Tested with and without defensive System Prompts.
+    \vspace{0.2cm}
+    \item \textbf{Evaluation Pipeline:} LLM-as-a-Judge (Llama 4 Scout 17B), cross-validated with human reviewers ($k > 0.73$).
+  \end{itemize}
+\end{frame}
+
+% Slide 4: Evaluation Metrics (Labels)
+\begin{frame}{Evaluation Metrics (Labels)}
+  Every response was classified into one of four mutually exclusive labels:
+  \vspace{0.4cm}
+  \begin{enumerate}
+    \item \textbf{Abstain (Safe):} The model recognizes contradictions and refuses to answer.
+    \vspace{0.2cm}
+    \item \textbf{Faithful (Fooled):} The model blindly repeats the poisoned context.
+    \vspace{0.2cm}
+    \item \textbf{Inconsistent (Violation):} The model silently corrects the error using its internal knowledge (violating RAG's groundedness principle).
+    \vspace{0.2cm}
+    \item \textbf{Hallucination:} The model fabricates completely unrelated information.
+  \end{enumerate}
+\end{frame}
+
+% Slide 5: Key Finding 1 - The Inverse Scaling Law
+\begin{frame}{Finding 1: The Inverse Scaling Law}
+  \textbf{Hypothesis:} Larger models are safer and more resistant to attacks.\\
+  \textbf{Reality:} Without a System Prompt, larger models are \textit{more vulnerable}.
+  \vspace{0.3cm}
+  \begin{table}
+    \centering
+    \begin{tabular}{lc}
+      \toprule
+      \textbf{Model (No Prompt)} & \textbf{Abstain Rate (Safety)} \\
+      \midrule
+      Llama 3.1 17B & 3.61\% \\
+      Llama 3.1 8B  & 42.55\% \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  \vspace{0.3cm}
+  \textbf{Why?} The 17B model's superior reasoning allows it to seamlessly synthesize flawed logic (Faithful: 51.4\%) or silently fix it (Inconsistent: 44.7\%). The 8B model gets confused and safely abstains.
+\end{frame}
+
+% Slide 6: Key Finding 2 - The Parametric Shield
+\begin{frame}{Finding 2: The Parametric Shield}
+  What happens when the model evaluates \textbf{Private Data} (no pretraining exposure)?
+  \vspace{0.3cm}
+  \begin{itemize}
+    \item The model loses its ``Parametric Shield'' (internal knowledge).
+    \item \textbf{Inconsistent (self-correction)} rate plummeted to just 2.88\%.
+    \item \textbf{Faithful (fooled)} rate jumped to 45.19\%.
+  \end{itemize}
+  \vspace{0.5cm}
+  \begin{alertblock}{Conclusion}
+    Enterprise RAG systems deployed on internal/private data are significantly more vulnerable to semantic poisoning than those using public data.
+  \end{alertblock}
+\end{frame}
+
+% Slide 7: Key Finding 3 - Prompt Engineering Limits
+\begin{frame}{Finding 3: Prompt Engineering is a Shield, Not a Cure}
+  \begin{itemize}
+    \item Adding a defensive System Prompt effectively acts as an immune response:
+    \begin{itemize}
+      \item 17B Abstain rate: 3.61\% $\rightarrow$ \textbf{60.10\%}
+      \item 8B Abstain rate: 42.55\% $\rightarrow$ \textbf{63.70\%}
+    \end{itemize}
+    \vspace{0.3cm}
+    \item However, \textbf{no configuration} achieved the $\ge 90\%$ Abstain safety threshold.
+    \vspace{0.3cm}
+    \item \textbf{Conclusion:} Lexical instructions alone cannot override deep semantic manipulation.
+  \end{itemize}
+\end{frame}
+
+% Slide 8: Key Finding 4 - The Hallucination Myth
+\begin{frame}{Finding 4: The Hallucination Myth}
+  \begin{itemize}
+    \item \textbf{Hallucinations} are often considered the biggest threat in LLMs.
+    \vspace{0.2cm}
+    \item Across over 2,000 automated evaluations, the hallucination rate \textbf{never exceeded 0.24\%} (effectively zero).
+    \vspace{0.2cm}
+    \item When poisoned, RAG models do not invent random facts. They exhibit a binary failure mode:
+    \begin{enumerate}
+      \item Passively trust the poison (Faithful).
+      \item Rebel and silently fix the poison (Inconsistent).
+    \end{enumerate}
+    \vspace{0.2cm}
+    \item \textbf{Shift in Focus:} Security research must pivot from measuring ``hallucinations'' to measuring ``faithfulness to poison.''
+  \end{itemize}
+\end{frame}
+
+% Slide 9: Conclusion
+\begin{frame}{Conclusion}
+  \begin{itemize}
+    \item \textbf{Scale vs. Safety:} RAG vulnerability scales \textit{inversely} with model size when left unprotected.
+    \vspace{0.3cm}
+    \item \textbf{Data Privacy Risk:} Private, internal data exposes RAG pipelines to much higher risks due to the absence of the Parametric Shield.
+    \vspace{0.3cm}
+    \item \textbf{Future Directions:} While prompt engineering helps, robust RAG systems will require structural and architectural defenses (e.g., GraphRAG, Controlled Noise Injection) to withstand semantic attacks.
+  \end{itemize}
+  \vspace{0.5cm}
+  \begin{center}
+    \Large \textbf{Thank You!}
+  \end{center}
+\end{frame}
+
+\end{document}
