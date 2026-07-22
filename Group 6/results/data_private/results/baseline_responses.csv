@@ -1,0 +1,688 @@
+id,query,baseline_answer
+sjs_001,How does the SJS system configure Access Token and Refresh Token security to prevent cyber attacks?,"The SJS system configures Access Token and Refresh Token security to prevent cyber attacks as follows:
+
+**Access Token:**
+
+1.  **Short-lived**: The Access Token has a short lifespan of 15 minutes, which limits the damage in case of a token compromise.
+2.  **Random UUID**: The Access Token is a cryptographically secure random UUID, making it difficult to guess or brute-force.
+3.  **Signed with RS256**: The Access Token is signed with the RS256 algorithm, which provides a high level of security and prevents tampering.
+
+**Refresh Token:**
+
+1.  **Long-lived**: The Refresh Token has a longer lifespan of 7 days, allowing users to maintain access without re-authenticating.
+2.  **HttpOnly and Secure Cookies**: The Refresh Token is stored in an HttpOnly and Secure cookie, which prevents JavaScript access and ensures transmission over a secure channel.
+3.  **SameSite=Strict**: The Refresh Token cookie is set with the SameSite=Strict flag, which prevents cross-site requests and reduces the risk of CSRF attacks.
+
+**Token Verification**:
+
+1.  **Public Key Verification**: The Access Token is verified using a public key, which ensures that the token was signed with the corresponding private key.
+2.  **Token Blacklisting**: The system maintains a blacklist of revoked tokens, which prevents the use of compromised or expired tokens.
+
+**Cyber Attack Prevention**:
+
+1.  **Prevents Token Theft**: The use of short-lived Access Tokens and secure storage of Refresh Tokens prevents token theft and reduces the risk of cyber attacks.
+2.  **Protects against CSRF and XSS**: The SJS system's token configuration protects against CSRF and XSS attacks by using secure cookies and strict token verification.
+
+By configuring Access Token and Refresh Token security in this way, the SJS system provides a robust defense against cyber attacks and protects user data."
+sjs_002,How is the Multer library configured and what is the file processing flow when the author submits an article?,"The Multer library is configured and the file processing flow works as follows:
+
+**Multer Configuration:**
+
+1.  **Memory Limit**: The Multer library is configured with a `fileSize` limit of 20MB, which prevents large file uploads.
+2.  **File Filter**: The library uses a `fileFilter` to only accept MIME types `application/pdf` and `application/vnd.openxmlformats-officedocument.wordprocessingml.document` (DOCX).
+
+**File Processing Flow:**
+
+1.  **Temporary Buffer**: When the author uploads a file, Multer stores the file in a temporary buffer.
+2.  **File Validation**: The library validates the file type and size, ensuring that it meets the configured limits.
+3.  **Streaming to Amazon S3**: If the file is valid, Multer streams the file directly to the Amazon S3 bucket using the AWS SDK v3.
+4.  **Object URI Generation**: After a successful upload, an Object URI is generated and recorded in the `Articles` table of MySQL.
+
+**Retry-After Mechanism:**
+
+1.  **Network Error Handling**: If a network error occurs during transmission (e.g., Network Timeout), the system uses a Retry-After mechanism for 3 attempts before sending a failure notification to the user.
+
+By configuring Multer with these settings and implementing a retry-after mechanism, the SJS system ensures:
+
+*   **Secure file uploads**: Only valid files are uploaded, and large files are rejected.
+*   **Efficient file processing**: Files are processed efficiently, and errors are handled effectively."
+sjs_003,Why does the SJS system have to combine both MySQL and Neo4j instead of using only one database?,"The SJS system combines both MySQL and Neo4j databases to leverage the strengths of each database and address specific use cases.
+
+**MySQL:**
+
+1.  **ACID Transactions**: MySQL provides support for ACID (Atomicity, Consistency, Isolation, Durability) transactions, which are essential for ensuring data integrity and consistency in the SJS system's core functionality, such as article processing charge (APC) payments, user accounts, and static metadata of articles.
+2.  **Relational Data Model**: MySQL's relational data model is well-suited for storing structured data, such as user information, article metadata, and payment records.
+
+**Neo4j:**
+
+1.  **Graph Data Model**: Neo4j's graph data model is ideal for storing and querying complex relationships between entities, such as authors, articles, and citations.
+2.  **Efficient Querying**: Neo4j's graph database architecture enables efficient querying and traversal of complex relationships, making it well-suited for use cases like collaboration analytics and hidden research cluster detection.
+
+**Combining MySQL and Neo4j:**
+
+1.  **Hybrid Approach**: By combining MySQL and Neo4j, the SJS system can leverage the strengths of both databases and create a hybrid approach that addresses specific use cases.
+2.  **Optimized Performance**: The hybrid approach optimizes performance by using MySQL for transactional data and Neo4j for complex relationship querying.
+
+**Why not use only one database?**
+
+1.  **Limited capabilities**: Using only one database would limit the capabilities of the SJS system, as each database has its strengths and weaknesses.
+2.  **Performance issues**: Using a single database for all data storage and querying could lead to performance issues, as the database would need to handle a wide range of data types and query patterns.
+
+By combining MySQL and Neo4j, the SJS system can:
+
+*   **Optimize performance**: Optimize performance by using the strengths of each database.
+*   **Improve data management**: Improve data management by leveraging the strengths of each database.
+
+Overall, the SJS system's hybrid approach enables efficient and scalable data management, allowing the system to support a wide range of use cases and provide a better user experience."
+sjs_004,"The process of checking plagiarism through Turnitin API is handled asynchronously, how is it done to not slow down the system?","The process of checking plagiarism through the Turnitin API is handled asynchronously to prevent slowing down the system. Here's a detailed explanation:
+
+1.  **Message Queue (RabbitMQ)**: When an article is submitted, a message is pushed into a message queue (RabbitMQ) with the article's metadata and a request to perform plagiarism checking.
+2.  **Background Worker**: A background worker consumes the message from the queue and performs the plagiarism checking using the Turnitin API.
+3.  **Asynchronous Processing**: The background worker processes the plagiarism checking request asynchronously, without blocking the main application thread.
+4.  **Webhook Notification**: Once the plagiarism checking is complete, Turnitin sends a webhook notification to the SJS system with the results.
+
+**Benefits of Asynchronous Processing:**
+
+1.  **Prevents Blocking**: Asynchronous processing prevents the main application thread from being blocked, ensuring that the system remains responsive.
+2.  **Scalability**: Asynchronous processing enables the system to handle a large volume of requests without significant performance degradation.
+
+**Turnitin API Integration:**
+
+1.  **RESTful API**: The SJS system integrates with the Turnitin API using a RESTful API, which provides a simple and efficient way to send requests and receive responses.
+2.  **Efficient Data Transfer**: The API is designed to transfer data efficiently, minimizing the amount of data transferred and reducing the load on the system.
+
+**System Performance:**
+
+1.  **Improved Responsiveness**: The asynchronous processing of plagiarism checking requests improves the system's responsiveness, ensuring that users can submit articles quickly and efficiently.
+2.  **Scalability**: The system's scalability is improved, enabling it to handle a large volume of requests without significant performance degradation.
+
+By handling the plagiarism checking process asynchronously, the SJS system:
+
+*   **Improves responsiveness**: Improves the system's responsiveness and user experience.
+*   **Enhances scalability**: Enhances the system's scalability, enabling it to handle a large volume of requests."
+sjs_005,How does the SJS RBAC model handle role-based access control at the project level through middleware?,"The SJS RBAC (Role-Based Access Control) model handles role-based access control at the project level through middleware using the following approach:
+
+**Middleware: `requireProjectAccess`**
+
+1.  **Extract Project ID**: The `requireProjectAccess` middleware extracts the `projectId` from the request parameters (`req.params`) or request body (`req.body`).
+2.  **User ID and Role**: It then retrieves the user's ID (`req.user.id`) and role from the decoded JWT token.
+3.  **Query Project Members Table**: The middleware queries the `Project_Members` table to check if the user has a matching record with the specified `projectId` and role.
+4.  **Check Allowed Roles**: If a matching record is found, the middleware checks if the user's role meets the `allowedRoles` array specified in the route definition.
+5.  **403 Forbidden Error**: If the user does not have permission or their role does not meet the required `allowedRoles`, the middleware throws a `403 Forbidden` error with the message 'You do not have permission on this project'.
+
+**Project-Level Context:**
+
+1.  **Extended RBAC Model**: The SJS RBAC model is extended to the project level, allowing users to have different roles in different projects.
+2.  **Fine-Grained Access Control**: This approach provides fine-grained access control, enabling administrators to manage user permissions at the project level.
+
+**Benefits:**
+
+1.  **Improved Security**: The `requireProjectAccess` middleware ensures that users only have access to projects they are authorized to access.
+2.  **Flexibility and Scalability**: The SJS RBAC model provides flexibility and scalability, enabling administrators to easily manage user permissions across multiple projects.
+
+**Example Use Case:**
+
+Suppose a user with the ID `123` has the role of `Author` in Project A and `Reviewer` in Project B. When the user attempts to access Project A, the `requireProjectAccess` middleware checks their role and ensures they have the required permissions.
+
+By using the `requireProjectAccess` middleware, the SJS RBAC model:
+
+*   **Ensures secure access**: Ensures secure access to projects based on user roles and permissions.
+*   **Provides flexibility**: Provides flexibility and scalability in managing user permissions across multiple projects."
+sjs_006,The Scatter Plot on the Collaboration Analytics page displays which dimensions of data of a scientist?,"The Scatter Plot on the Collaboration Analytics page displays the following dimensions of data for a scientist:
+
+*   **Productivity (X-axis)**: The Total Number of Accepted Publications, ranging from 0 to 100.
+*   **Academic Impact (Y-axis)**: The H-Index, with no maximum limit, based on the total number of citations.
+*   **Size of the Data Point (Dot Radius)**: The number of Co-authors that the scientist has collaborated with.
+
+Additionally, when a user hovers over a data point, a custom Tooltip displays a pop-up information box showing:
+
+*   **Author's Name**
+*   **Institution**
+*   **Average Impact Factor**
+
+These dimensions provide a comprehensive overview of a scientist's collaboration analytics, enabling users to visualize and compare the productivity, academic impact, and collaboration patterns of various scientists."
+sjs_007,What technical measures does the system apply to ensure double-blindness during the peer review process?,"The system applies the following technical measures to ensure double-blindness during the peer review process:
+
+1.  **Hiding Author's Name**: The system hides the author's name on the Reviewer's interface.
+2.  **Removing Metadata**: The system calls a script to remove the metadata (exif data) of the original PDF file.
+3.  **Encrypted Reviewer Identifier**: The system uses an encrypted identifier for the reviewer, such as `Rev_Alpha` or `Rev_Beta`, to maintain anonymity.
+4.  **Internal Chat System**: The discussion between the Author and Reviewer takes place through the application's internal Chat system, which helps to maintain the double-blindness.
+
+By applying these technical measures, the system ensures that:
+
+*   **Author's Identity**: The author's identity is not revealed to the reviewer.
+*   **Reviewer's Identity**: The reviewer's identity is not revealed to the author.
+
+The double-blindness ensures that the peer review process is fair and unbiased, and helps to maintain the integrity of the academic publishing process."
+sjs_008,What is the caching and cache invalidation strategy for the list of articles?,"The caching and cache invalidation strategy for the list of articles is as follows:
+
+**Caching Strategy:**
+
+1.  **Cache Key**: The cache key is designed with a hierarchical syntax: `sjs:articles:journal_{id}:filter_{status}:page_{num}`.
+2.  **TTL (Time To Live)**: The stored JSON data has a default TTL of 600 seconds (10 minutes).
+
+**Cache Invalidation Strategy:**
+
+1.  **Active Cache Invalidation**: An active cache invalidation strategy is applied to ensure data consistency.
+2.  **Cache Deletion**: Whenever an Editor reviews a new article (PUT/PATCH) or an Author submits an article (POST), the system not only updates the Database but also calls the command `redis.keys('sjs:articles:journal_{id}:*')` to scan and delete all related caches for that Journal.
+
+By using this caching and cache invalidation strategy, the system:
+
+*   **Improves Performance**: Reduces the load on the database and improves page loading speed.
+*   **Ensures Data Consistency**: Ensures that users always see the latest data without sacrificing page loading speed."
+sjs_009,What database architecture is used for the system to store and manage the status of tracking user posts?,"The system uses a **Hybrid Database Architecture**, which combines the strengths of multiple database management systems.
+
+**Core Components:**
+
+1.  **MySQL 8.0**: Used as the core Relational Database Management System (RDBMS) to manage the integrity of ACID transactions related to:
+    *   Article processing charge (APC) payments
+    *   User accounts
+    *   Static metadata of articles
+2.  **Neo4j Graph Database**: Used to store and manage complex relationships between data entities, such as:
+    *   Author identity
+    *   Institution
+    *   Article data
+
+**Benefits:**
+
+1.  **Improved Performance**: The hybrid architecture allows for optimized performance in managing complex relationships and transactions.
+2.  **Enhanced Data Integrity**: The use of MySQL 8.0 ensures the integrity of ACID transactions, while Neo4j provides efficient querying of complex relationships.
+
+However, for tracking user posts, specifically for storing and managing the status of user posts, the system utilizes:
+
+**Junction Table (`Project_Article`)**:
+
+1.  **N-N Relationship**: Manages the many-to-many relationship between `Users` and `Articles`.
+2.  **Enum Column (`reading_status`)**: Allows users to categorize the status as `To_Read`, `Reading`, or `Completed`.
+
+By using this hybrid database architecture and junction table, the system efficiently stores and manages the status of user posts."
+sjs_010,"The Zustand Store in the Front-end SJS application is designed with a specific structure and features to improve UX, including a centralized state management system, automatic memoization, and re-rendering optimization, allowing for efficient and scalable management of global state and improved user experience.","The Zustand Store in the Front-end SJS application is designed with the following structure and features:
+
+**Key Features:**
+
+1.  **Centralized State Management**: Zustand provides a centralized state management system, allowing for efficient management of global state.
+2.  **Automatic Memoization**: Zustand supports automatic memoization, which optimizes performance by minimizing unnecessary re-renders.
+3.  **Re-rendering Optimization**: Zustand's design enables optimized re-rendering, ensuring a smooth user experience.
+
+**Store Structure:**
+
+The Zustand Store is designed with a simple and lightweight architecture, featuring:
+
+1.  **`useFavoriteArticles.js`**: A custom hook that defines the Zustand store for managing favorite articles.
+2.  **Persist Middleware**: The store is equipped with Persist Middleware, which enables automatic synchronization of state to the browser's Local Storage.
+
+**Benefits:**
+
+1.  **Improved UX**: The Zustand Store's design and features improve the user experience by providing efficient and scalable management of global state.
+2.  **Efficient Performance**: Automatic memoization and re-rendering optimization ensure optimal performance and minimize unnecessary re-renders.
+
+Overall, the Zustand Store in the Front-end SJS application is designed to provide a robust, efficient, and scalable state management system, ultimately enhancing the user experience."
+sjs_011,What is the detailed process of checking and automatically recovering the MySQL database in a local environment?,"The detailed process of checking and automatically recovering the MySQL database in a local environment involves:
+
+**Step 1: Ping MySQL Container**
+
+1.  The `checkLocalDb.js` script utilizes the built-in `net` module of Node.js to continuously ping `localhost:3306` up to 5 times, with each attempt 1000ms apart.
+
+**Step 2: Error Detection and Recovery**
+
+1.  If the ping attempts completely fail (timeout/connection refused), the script uses the `child_process.exec` module to force-run the command `docker-compose -f docker-compose.local.yml up -d --force-recreate mysql_db`.
+
+**Step 3: Logging and Debugging**
+
+1.  The history of this recovery process, including the timestamp and initial error stack trace, is appended directly to the `diagnostic.log` file for system debugging purposes.
+
+**Implementation Details:**
+
+1.  **Integration with npm**: The `checkLocalDb.js` script is integrated into the `prestart` lifecycle of npm.
+2.  **Automated Error Correction**: The script provides automated error correction, ensuring that the MySQL database is recovered quickly and efficiently.
+
+By following this process, the system ensures:
+
+*   **Database Reliability**: The MySQL database is checked and recovered automatically in case of errors or crashes.
+*   **Improved Debugging**: The logging and debugging capabilities provide valuable insights into the recovery process.
+
+The implementation of this process ensures a robust and reliable MySQL database in a local environment."
+sjs_012,What DOM manipulation techniques and meta tags does the SJS system apply to solve the SEO problem for Single Page Applications?,"The SJS system applies the following DOM manipulation techniques and meta tags to solve the SEO problem for Single Page Applications:
+
+**DOM Manipulation Techniques:**
+
+1.  **React Helmet Async**: The SJS system uses React Helmet Async to directly manipulate the `<head>` tag of the virtual DOM.
+2.  **Meta Tags Injection**: When the URL `/article/:slug` is accessed, the Component automatically assigns the article's values to the meta tags.
+
+**Meta Tags:**
+
+1.  **Title Tag**: The `<title>` tag is assigned the string `Title | SJS Journal`.
+2.  **Meta Description Tag**: The `<meta name=""description"">` tag is truncated to 160 characters from the Abstract of the research.
+3.  **Open Graph (OG) Tags**: The system injects OG tags such as `og:title`, `og:type=""article""`, and `og:image` containing the CDN path of the cover image.
+
+**Benefits:**
+
+1.  **Improved SEO**: The SJS system's approach ensures that the Single Page Application is optimized for search engines, improving its visibility and ranking.
+2.  **Dynamic Meta Tags**: The system allows for dynamic meta tags, enabling the creation of customized and relevant meta tags for each article.
+
+By applying these DOM manipulation techniques and meta tags, the SJS system:
+
+*   **Solves SEO problems**: Addresses the SEO challenges associated with Single Page Applications.
+*   **Improves search engine visibility**: Enhances the visibility and ranking of the SJS Journal in search engine results."
+sjs_013,How does the system ensure that the flow of email transactions does not slow down the response speed of the API and does not cause network congestion?,"The system ensures that the flow of email transactions does not slow down the response speed of the API and does not cause network congestion by:
+
+**Asynchronous Processing**
+
+1.  **Message Queue (RabbitMQ)**: The system uses a message queue (RabbitMQ) to handle email transactions asynchronously, decoupling the email processing from the API request.
+
+**Worker-based Architecture**
+
+1.  **Email Worker**: A separate worker process (Email Worker) is responsible for processing email transactions, preventing the API from being blocked.
+
+**Rate Limiting**
+
+1.  **Exponential Backoff**: The system implements rate limiting with exponential backoff to prevent network congestion and ensure that the email transactions are processed efficiently.
+
+**Benefits**
+
+1.  **Improved API Response Speed**: The asynchronous processing and worker-based architecture ensure that the API response speed is not affected by email transactions.
+2.  **Prevents Network Congestion**: The rate limiting and exponential backoff prevent network congestion and ensure that the email transactions are processed efficiently.
+
+By implementing these strategies, the system:
+
+*   **Ensures efficient email processing**: Ensures that email transactions are processed efficiently without affecting the API response speed.
+*   **Prevents network congestion**: Prevents network congestion and ensures that the system can handle a large volume of email transactions."
+sjs_014,How is the Streaming technique used when exporting Excel reports and what sensitive information is embedded within the file?,"The Streaming technique is used when exporting Excel reports in the following way:
+
+**Streaming Technique**
+
+1.  **exceljs library**: The system uses the `exceljs` library with a Streaming I/O model to export Excel reports.
+2.  **Chunked Data Retrieval**: The system queries SQL in chunks of 1000 rows to prevent overloading the server.
+3.  **Streaming Data to Response**: The system streams the data directly to the HTTP Response with the `Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` Header.
+
+**Embedded Sensitive Information**
+
+1.  **Hidden Worksheet**: In addition to the main Sheet for statistical reporting, the system secretly embeds a second **Hidden Worksheet**.
+2.  **Digital Signature**: The hidden worksheet stores a **Digital Signature**.
+3.  **User-Agent Information**: The hidden worksheet stores **User-Agent** information.
+4.  **IP Addresses of Accesses**: The hidden worksheet stores IP addresses of accesses.
+5.  **Timestamp**: The hidden worksheet stores a **Timestamp**.
+
+**Purpose**
+
+1.  **Digital Forensics**: The embedded sensitive information serves the purpose of **Digital Forensics** in case of suspected data leakage or fraudulent reviewer evaluation.
+
+By using the Streaming technique and embedding sensitive information, the system:
+
+*   **Efficiently exports Excel reports**: Efficiently exports Excel reports without overloading the server.
+*   **Provides a secure audit trail**: Provides a secure audit trail for digital forensics purposes."
+sjs_015,Cursor-based Pagination works on the principle of technical mechanism to optimize the retrieval performance on large databases.,"Cursor-based Pagination works on the principle of the following technical mechanism to optimize the retrieval performance on large databases:
+
+**Technical Mechanism**
+
+1.  **Last Record's Timestamp**: The system retrieves the **Last Record's Timestamp** (or other unique identifier) from the previous query.
+2.  **Filtering Records**: The system uses this timestamp to filter records that are **newer** (or older) than this timestamp.
+3.  **Limited Number of Records**: The system limits the number of records returned to a **fixed number** (e.g., 20).
+
+**Optimizations**
+
+1.  **B-Tree Index**: The system utilizes a **B-Tree Index** on the timestamp column.
+2.  **Efficient Query Execution**: The system ensures efficient query execution by using the index to quickly locate the required records.
+
+**Benefits**
+
+1.  **Improved Performance**: The system achieves **consistent and improved performance**, even with large databases.
+2.  **Reduced Load**: The system reduces the load on the database by only retrieving a limited number of records.
+
+By using Cursor-based Pagination, the system:
+
+*   **Optimizes retrieval performance**: Optimizes retrieval performance on large databases.
+*   **Improves scalability**: Improves scalability by reducing the load on the database."
+sjs_016,The Trending Score algorithm uses a mathematical formula to prevent the monopoly display phenomenon of old articles?,"The Trending Score algorithm uses a mathematical formula to prevent the monopoly display phenomenon of old articles by:
+
+**Trending Score Formula**
+
+1.  **Score Calculation**: The Trending Score is calculated using the formula: $Score = (D \times 1.5 + V \times 0.5 + C \times 3.0) / e^{\lambda \times T}$.
+2.  **Time-Decay Function**: The algorithm uses a **time-decay function** ($e^{\lambda \times T}$) to reduce the score of older articles over time.
+
+**Preventing Monopoly Display**
+
+1.  **New Articles**: The algorithm favors **new articles** with a higher score, ensuring they are displayed prominently.
+2.  **Old Articles**: The algorithm reduces the score of **old articles**, preventing them from dominating the display.
+
+**Benefits**
+
+1.  **Fairness**: The algorithm ensures **fairness** in the display of articles, giving newer articles a chance to be seen.
+2.  **Prevents Monopoly**: The algorithm prevents the **monopoly display phenomenon**, where old articles dominate the display.
+
+By using the Trending Score algorithm, the system:
+
+*   **Promotes new articles**: Promotes new articles and gives them a chance to be seen.
+*   **Prevents old article monopoly**: Prevents old articles from dominating the display."
+sjs_017,The Sentry SDK is configured with what mechanism to ensure GDPR compliance and prevent sensitive data leakage?,"The Sentry SDK is configured with a **beforeSend hook** mechanism to ensure GDPR compliance and prevent sensitive data leakage.
+
+**beforeSend Hook**
+
+1.  **Data Filtering**: The beforeSend hook acts as a **final data filter**, scanning the entire JSON payload.
+2.  **Regular Expressions**: The hook uses **regular expressions** to automatically overwrite fields containing sensitive information.
+
+**Sensitive Data Masking**
+
+1.  **Field Names**: The hook masks fields with names like **'password'**, **'token'**, and **'authorization'**.
+2.  **Email Format**: The hook masks any string with an **email format** ([a-z]+@[a-z]+\.[a-z]+) with **[MASKED_DATA]**.
+
+**GDPR Compliance**
+
+1.  **Personally Identifiable Information (PII)**: The configuration ensures that **PII** does not leave the server.
+2.  **Data Protection**: The configuration protects sensitive data, ensuring **GDPR compliance**.
+
+By using the beforeSend hook mechanism, the system:
+
+*   **Ensures GDPR compliance**: Ensures GDPR compliance by preventing sensitive data leakage.
+*   **Protects sensitive data**: Protects sensitive data, maintaining the confidentiality and integrity of user information."
+sjs_018,"The Dark Mode system combines Context API, primitive DOM manipulation, and which storage to create a seamless user experience?","The Dark Mode system combines **Context API**, **primitive DOM manipulation**, and **LocalStorage** to create a seamless user experience.
+
+**Context API**
+
+1.  **Theme Management**: The Context API manages the theme state, allowing the application to switch between light and dark modes.
+2.  **Global State**: The Context API provides a **global state** that can be accessed by all components.
+
+**Primitive DOM Manipulation**
+
+1.  **HTML Tag Manipulation**: The system uses primitive DOM manipulation to add or remove the `data-theme` attribute from the `<html>` tag.
+2.  **CSS Variable Updates**: The system updates CSS variables to reflect the current theme.
+
+**LocalStorage**
+
+1.  **Theme Preference Storage**: The system stores the user's theme preference in **LocalStorage**.
+2.  **Persistent Theme**: The system ensures that the theme preference is **persistent** across page reloads and browser restarts.
+
+By combining Context API, primitive DOM manipulation, and LocalStorage, the Dark Mode system:
+
+*   **Provides a seamless user experience**: Provides a seamless user experience by allowing users to switch between light and dark modes.
+*   **Ensures persistent theme preference**: Ensures that the user's theme preference is persistent across page reloads and browser restarts."
+sjs_019,What is the process of synchronization and natural language analysis in the Full-text Search architecture of Elasticsearch?,"The process of synchronization and natural language analysis in the Full-text Search architecture of Elasticsearch involves the following steps:
+
+**Synchronization**
+
+1.  **Logstash**: Logstash inspects the MySQL binlog and synchronizes the data into the `sjs_articles_index` of Elasticsearch whenever an article's status changes to `Published`.
+2.  **Data Pipeline**: The data pipeline operates through Logstash, ensuring that the data is up-to-date and consistent.
+
+**Natural Language Analysis**
+
+1.  **Analyzer**: The text is passed through an **analyzer**, which removes **stop words** (such as 'a', 'the', 'and') and performs **stemming** to their roots.
+2.  **Levenshtein Distance Algorithm**: The query engine of Elasticsearch applies the **Levenshtein Distance algorithm**, enabling **fuzzy search**.
+3.  **Edit Distance Calculation**: The system calculates the **edit distance** (e.g., edit distance = 2) to return relevant results even if the user types a misspelled query (e.g., 'phtosynthesis' instead of 'photosynthesis').
+
+**Elasticsearch Indexing**
+
+1.  **Index Creation**: Elasticsearch creates an index (`sjs_articles_index`) to store the synchronized data.
+2.  **Indexing**: The data is indexed, allowing for efficient searching and retrieval.
+
+By using this process, the Full-text Search architecture of Elasticsearch:
+
+*   **Provides efficient searching**: Provides efficient searching and retrieval of articles based on their content.
+*   **Enables fuzzy search**: Enables fuzzy search, allowing users to find relevant results even with misspelled queries."
+sjs_020,How does Nginx manage memory resources and set up Rate Limiting rules to prevent Brute-Force attacks?,"Nginx manages memory resources and sets up Rate Limiting rules to prevent Brute-Force attacks as follows:
+
+**Memory Resource Management**
+
+1.  **Shared Memory Zone**: Nginx initializes a **shared memory zone** named `limit_req_zone $binary_remote_addr zone=api_limit:10m rate=100r/m`.
+2.  **Memory Allocation**: The shared memory zone allocates **10MB of RAM** to track the number of requests from IP addresses.
+
+**Rate Limiting Rules**
+
+1.  **Rate Limiting**: Nginx applies a **rate limiting** rule to limit the rate to **100 requests per minute** for all API endpoints.
+2.  **Strict Rate Limiting**: For paths with extremely high security risks, such as `/api/v1/auth/login`, Nginx applies a **strict rate limiting** rule, limiting the rate to **5 requests per minute** (rate=5r/m), with the `burst=2 nodelay` parameter.
+
+**Preventing Brute-Force Attacks**
+
+1.  **Automated Script Detection**: Any automated script (Bot script) that attempts to bombard passwords beyond the limit will be **rejected by the Nginx server immediately** at Layer 7 (Application Layer).
+2.  **HTTP 429 Response**: The Nginx server returns an **HTTP 429 (Too Many Requests)** code, helping to free the Backend Node.js from the burden of processing.
+
+By using these mechanisms, Nginx:
+
+*   **Manages memory resources efficiently**: Manages memory resources efficiently to prevent excessive memory usage.
+*   **Prevents Brute-Force attacks**: Prevents Brute-Force attacks by limiting the rate of requests and rejecting automated scripts."
+sjs_021,The revision phase requires the author to provide what types of documents and what technical system is used to process the letter of explanation?,"During the revision phase, the author is required to provide:
+
+1.  **PDF manuscript with highlighted changes**: A PDF manuscript containing the highlighted changes.
+2.  **Response to reviewers in Microsoft Word (.docx) format**: A response to reviewers in Microsoft Word (.docx) format.
+
+The technical system used to process the letter of explanation is:
+
+1.  **Mammoth.js library**: The Backend uses the `mammoth.js` library for **raw text extraction** from the `.docx` file.
+2.  **Internal hash matching algorithm**: The Backend then passes the extracted text through an **internal hash matching algorithm** to automatically index whether the author has fully addressed each reviewer's comment."
+sjs_022,How are Cron jobs and Worker Threads combined to synchronize academic data repositories from ORCID to the internal system?,"Cron jobs and Worker Threads are combined to synchronize academic data repositories from ORCID to the internal system as follows:
+
+**Cron Jobs**
+
+1.  **Scheduled Task**: A **Cron job** is scheduled to run every night at **01:30 AM (UTC time)**.
+2.  **Account Review**: The Cron job reviews the list of accounts with valid ORCID codes.
+
+**Worker Threads**
+
+1.  **Worker Thread Creation**: For each account, a **Worker Thread** is created to send a **GET request to the ORCID API** (`https://pub.orcid.org/v3.0/[ORCID_ID]/works`).
+2.  **Parallel Processing**: Multiple Worker Threads process the accounts in **parallel**, improving efficiency.
+
+**Data Synchronization**
+
+1.  **XML Data Compilation**: The returned XML data is compiled into JSON by the `fast-xml-parser` library.
+2.  **Metadata Extraction**: Metadata structures (such as DOI, Title, Publication Year) are extracted.
+3.  **SQL Insertion**: The extracted metadata is inserted into the `External_Publications` table using the SQL `INSERT IGNORE` command.
+
+By combining Cron jobs and Worker Threads, the system:
+
+*   **Efficiently synchronizes data**: Efficiently synchronizes academic data repositories from ORCID to the internal system.
+*   **Improves performance**: Improves performance by processing accounts in parallel."
+sjs_023,What technical mechanism allows ClamAV to scan uploaded files in real-time without causing disk I/O bottlenecks?,"The technical mechanism that allows ClamAV to scan uploaded files in real-time without causing disk I/O bottlenecks is:
+
+1.  **In-memory Scanning**: The SJS infrastructure integrates the open-source ClamAV antivirus software at the **edge server level**.
+2.  **Temporary RAM Disk (`tmpfs`)**: All binary upload streams are blocked in a `tmpfs` (RAM disk) instead of being written directly to the **hard drive**.
+3.  **Node.js and TCP Socket Protocol**: Node.js uses the **TCP socket protocol** to connect to the running `clamd` daemon, rotating byte data buffers through **port 3310**.
+4.  **Real-time Scanning**: The real-time scan process, which matches signatures, takes less than **4 seconds**.
+5.  **Immediate Action**: If the status `OK` is returned, the stream is piped to **AWS S3**. Conversely, if the daemon returns a malware warning, the file on the RAM disk is immediately deleted, a security violation record is created, and the Author's account is temporarily locked out for **24 hours**.
+
+By using this in-memory scanning mechanism, ClamAV:
+
+*   **Scans files in real-time**: Scans uploaded files in real-time without causing disk I/O bottlenecks.
+*   **Ensures absolute security**: Ensures absolute security by preventing malware infections."
+sjs_024,"The real-time messaging architecture from Backend to Frontend is designed with technologies and mechanisms such as WebSockets, Server-Sent Events (SSE), Long Polling, and WebRTC.","The real-time messaging architecture from Backend to Frontend is designed with technologies and mechanisms such as:
+
+**WebSockets**
+
+1.  **Bi-directional Communication**: WebSockets enable **bi-directional communication** between the Frontend and Backend.
+2.  **Real-time Updates**: WebSockets provide **real-time updates**, allowing the Frontend to receive updates from the Backend instantly.
+
+**Server-Sent Events (SSE)**
+
+1.  **Server-to-Client Communication**: SSE enables **server-to-client communication**, allowing the Backend to push updates to the Frontend.
+2.  **Event-driven Updates**: SSE provides **event-driven updates**, allowing the Frontend to react to events sent by the Backend.
+
+**Long Polling**
+
+1.  **Client-Server Communication**: Long Polling enables **client-server communication**, allowing the Frontend to request updates from the Backend.
+2.  **Delayed Responses**: Long Polling provides **delayed responses**, allowing the Backend to push updates to the Frontend.
+
+**WebRTC**
+
+1.  **Real-time Communication**: WebRTC enables **real-time communication** between the Frontend and Backend.
+2.  **Peer-to-Peer Communication**: WebRTC provides **peer-to-peer communication**, allowing the Frontend and Backend to communicate directly.
+
+By using these technologies and mechanisms, the real-time messaging architecture:
+
+*   **Enables real-time updates**: Enables real-time updates from the Backend to the Frontend.
+*   **Provides efficient communication**: Provides efficient communication between the Frontend and Backend."
+sjs_025,How does the Billing Module calculate and securely process the APC fee payment through the Stripe API?,"The Billing Module calculates and securely processes the APC fee payment through the Stripe API as follows:
+
+**APC Fee Calculation**
+
+1.  **Geo-Pricing Matrix**: The Billing Module uses a **Geo-Pricing Matrix** to calculate the APC fee based on the **country of the Corresponding Author**.
+2.  **Discount Application**: A **50% discount** is applied for authors from **low-income economies** as defined by the **World Bank**.
+
+**Stripe API Integration**
+
+1.  **Stripe Elements**: The Billing Module uses **Stripe Elements** to securely collect credit card information from the user.
+2.  **Tokenization**: The credit card information is **tokenized** by Stripe, ensuring that sensitive information is not stored on the server.
+3.  **Payment Processing**: The token is then used to complete the payment through the **Stripe API**.
+
+**Secure Payment Processing**
+
+1.  **PCI-DSS Compliance**: The Billing Module ensures **PCI-DSS compliance** by using Stripe's secure payment processing infrastructure.
+2.  **Secure Tokenization**: The use of tokenization ensures that sensitive credit card information is not stored on the server.
+
+By using the Stripe API and secure payment processing mechanisms, the Billing Module:
+
+*   **Calculates APC fees accurately**: Calculates APC fees accurately based on the Geo-Pricing Matrix and discount application.
+*   **Processes payments securely**: Processes payments securely through the Stripe API, ensuring PCI-DSS compliance and secure tokenization."
+sjs_026,What specific operations have the periodic maintenance scripts performed at the operating system and database levels to reduce the load on the server?,"The periodic maintenance scripts have performed the following specific operations at the operating system and database levels to reduce the load on the server:
+
+**Operating System Level**
+
+1.  **Log Cleanup**: The scripts clean up **expired logs** on a daily basis to prevent log files from growing indefinitely and consuming disk space.
+2.  **Temporary File Cleanup**: The scripts remove **temporary files** older than 7 days to prevent unnecessary disk usage.
+
+**Database Level**
+
+1.  **Database Optimization**: The scripts perform **database optimization** tasks to improve database performance and reduce query execution time.
+2.  **Index Rebuilding**: The scripts rebuild **indexes** to ensure efficient data retrieval and prevent slow query performance.
+
+**Benefits**
+
+1.  **Reduced Load**: The periodic maintenance scripts reduce the load on the server by cleaning up unnecessary files and optimizing database performance.
+2.  **Improved Performance**: The scripts improve server performance by ensuring efficient use of disk space and optimizing database queries.
+
+By performing these operations, the periodic maintenance scripts:
+
+*   **Reduce server load**: Reduce server load by cleaning up unnecessary files and optimizing database performance.
+*   **Improve server performance**: Improve server performance by ensuring efficient use of disk space and optimizing database queries.
+
+The specific commands used in the scripts include:
+
+1.  **`find /var/log -type f -name ""*.log"" -mtime +7 -exec rm {} \\;`**: This command deletes log files older than 7 days in the `/var/log` directory.
+2.  **`mysqlcheck --optimize --all-databases`**: This command optimizes all databases and tables in the MySQL database."
+sjs_027,The process of collecting and analyzing data on the reasons for rejecting articles brings what strategic value to the Editorial Board?,"The process of collecting and analyzing data on the reasons for rejecting articles brings the following strategic value to the Editorial Board:
+
+**Data-Driven Decision Making**
+
+1.  **Informed Policy Development**: The data provides insights into the reasons for article rejection, enabling the Editorial Board to develop **informed policies** to address common issues.
+2.  **Targeted Interventions**: The data allows the Editorial Board to identify areas where authors need additional support or guidance, enabling **targeted interventions**.
+
+**Improved Editorial Process**
+
+1.  **Streamlined Review Process**: The data helps to identify bottlenecks and inefficiencies in the review process, enabling the Editorial Board to **streamline the process**.
+2.  **Enhanced Reviewer Training**: The data informs the development of **reviewer training programs**, ensuring that reviewers are equipped to provide high-quality reviews.
+
+**Enhanced Journal Quality**
+
+1.  **Improved Article Quality**: By identifying common reasons for rejection, the Editorial Board can provide authors with **targeted feedback**, leading to improved article quality.
+2.  **Increased Transparency**: The data provides transparency into the review process, enabling the Editorial Board to **demonstrate accountability** and **transparency**.
+
+By collecting and analyzing data on the reasons for rejecting articles, the Editorial Board:
+
+*   **Makes informed decisions**: Makes informed decisions about policy development, interventions, and process improvements.
+*   **Improves editorial process**: Improves the editorial process, enhancing the quality of articles and the overall review experience."
+sjs_028,How are Code Splitting and Lazy Loading mechanisms applied to optimize multilingual functionality?,"Code Splitting and Lazy Loading mechanisms are applied to optimize multilingual functionality as follows:
+
+**Code Splitting**
+
+1.  **Separation of Language Files**: The multilingual support architecture separates language files into **separate bundles**, allowing for efficient loading of only the required language data.
+2.  **Dynamic Import**: The system uses **dynamic import** statements to load language files only when needed, reducing the initial payload size.
+
+**Lazy Loading**
+
+1.  **On-Demand Loading**: The system applies **lazy loading** to load language files on-demand, reducing the initial load time and improving page performance.
+2.  **Efficient Resource Utilization**: Lazy loading ensures efficient resource utilization, as only the required language data is loaded.
+
+**Benefits**
+
+1.  **Improved Performance**: The Code Splitting and Lazy Loading mechanisms improve page performance by reducing the initial payload size and load time.
+2.  **Enhanced User Experience**: The optimized multilingual functionality provides an **enhanced user experience**, as users can access the required language data quickly and efficiently.
+
+By applying Code Splitting and Lazy Loading mechanisms, the system:
+
+*   **Optimizes multilingual functionality**: Optimizes multilingual functionality, improving page performance and user experience.
+*   **Reduces load time**: Reduces load time by loading language files on-demand."
+sjs_029,The migration from Moment.js to date-fns addresses the technical challenge of optimizing Bundle Size and Tree-shaking.,"The migration from Moment.js to date-fns addresses the technical challenge of optimizing **Bundle Size** and **Tree-shaking** in the following ways:
+
+**Bundle Size Optimization**
+
+1.  **Modular Design**: date-fns has a **modular design**, allowing developers to import only the required functions, reducing the overall bundle size.
+2.  **Smaller Library Size**: date-fns is a **smaller library** compared to Moment.js, resulting in a smaller bundle size.
+
+**Tree-shaking**
+
+1.  **Tree-shaking Support**: date-fns supports **tree-shaking**, allowing Webpack or other bundlers to eliminate unused code, reducing the bundle size.
+2.  **Pure Functions**: date-fns provides **pure functions**, making it easier for tree-shaking to eliminate unused code.
+
+**Benefits**
+
+1.  **Improved Performance**: The migration to date-fns improves performance by reducing the bundle size and optimizing tree-shaking.
+2.  **Enhanced Developer Experience**: The modular design and pure functions of date-fns provide an **enhanced developer experience**, making it easier to use and integrate.
+
+By migrating from Moment.js to date-fns, the system:
+
+*   **Optimizes bundle size**: Optimizes bundle size by reducing the library size and supporting tree-shaking.
+*   **Improves performance**: Improves performance by reducing the bundle size and optimizing tree-shaking."
+sjs_030,The asynchronous batch processing algorithm using setImmediate() works to prevent the Server Hang phenomenon on Node.js as follows:,"The asynchronous batch processing algorithm using `setImmediate()` works to prevent the Server Hang phenomenon on Node.js as follows:
+
+**Asynchronous Batch Processing**
+
+1.  **Chunking**: The algorithm **divides the data into smaller chunks** (e.g., 100 items per chunk).
+2.  **setImmediate()**: The algorithm uses `setImmediate()` to **schedule the processing of each chunk**, allowing the Event Loop to process other tasks.
+
+**Preventing Server Hang**
+
+1.  **Non-Blocking I/O**: By using `setImmediate()`, the algorithm **avoids blocking the Event Loop**, preventing the server from hanging.
+2.  **Efficient Resource Utilization**: The algorithm ensures **efficient resource utilization**, as the server can process other tasks while waiting for I/O operations to complete.
+
+**Benefits**
+
+1.  **Improved Performance**: The asynchronous batch processing algorithm improves performance by **preventing server hang** and ensuring efficient resource utilization.
+2.  **Scalability**: The algorithm enables **scalability**, as the server can handle large datasets without becoming unresponsive.
+
+By using the asynchronous batch processing algorithm with `setImmediate()`, Node.js:
+
+*   **Prevents server hang**: Prevents server hang by avoiding blocking I/O operations.
+*   **Improves performance**: Improves performance by ensuring efficient resource utilization and scalability."
+sjs_031,Configuring Keep-Alive on the Axios HTTP library thoroughly resolves which bottleneck in the Network Layer during the Crawler process?,"Configuring Keep-Alive on the Axios HTTP library thoroughly resolves the **TCP Handshake and SSL/TLS Negotiation bottleneck** in the Network Layer during the Crawler process.
+
+**TCP Handshake and SSL/TLS Negotiation**
+
+1.  **TCP Handshake**: The TCP handshake is a **three-way handshake** that establishes a connection between the client and server.
+2.  **SSL/TLS Negotiation**: The SSL/TLS negotiation is a **handshake process** that establishes a secure connection between the client and server.
+
+**Bottleneck**
+
+1.  **Repeated Handshakes**: Without Keep-Alive, the Crawler process would require **repeated handshakes** for each request, leading to increased latency and decreased performance.
+
+**Keep-Alive Configuration**
+
+1.  **Keep-Alive Header**: The Keep-Alive header is configured to **keep the TCP connection alive** for multiple requests.
+2.  **Reduced Handshakes**: By keeping the connection alive, the Crawler process **reduces the number of handshakes**, leading to improved performance and decreased latency.
+
+**Benefits**
+
+1.  **Improved Performance**: Configuring Keep-Alive improves performance by **reducing the number of handshakes** and minimizing latency.
+2.  **Increased Efficiency**: The Keep-Alive configuration increases efficiency by **reducing the overhead** of repeated handshakes.
+
+By configuring Keep-Alive on the Axios HTTP library, the Crawler process:
+
+*   **Resolves TCP Handshake bottleneck**: Resolves the TCP handshake bottleneck by reducing the number of handshakes.
+*   **Improves performance**: Improves performance by minimizing latency and increasing efficiency."
+sjs_032,The Express.js CORS configuration architecture has addressed the issue of network resource waste related to Preflight Request streams with which header tag?,"The Express.js CORS configuration architecture has addressed the issue of network resource waste related to Preflight Request streams with the **`Access-Control-Max-Age` header tag.
+
+**Preflight Request**
+
+1.  **OPTIONS Request**: A Preflight Request is an **OPTIONS request** sent by the browser to the server to determine if a request is allowed.
+2.  **Preflight Response**: The server responds with a **Preflight Response** indicating which methods and headers are allowed.
+
+**Access-Control-Max-Age Header**
+
+1.  **Cache Duration**: The `Access-Control-Max-Age` header specifies the **cache duration** for the Preflight Response.
+2.  **Reducing Requests**: By setting a positive value (e.g., 86400), the browser **caches the Preflight Response** for the specified duration, reducing the number of Preflight Requests.
+
+**Benefits**
+
+1.  **Reducing Network Resource Waste**: The `Access-Control-Max-Age` header reduces network resource waste by **minimizing the number of Preflight Requests**.
+2.  **Improved Performance**: The header improves performance by **reducing the latency** associated with Preflight Requests.
+
+By setting the `Access-Control-Max-Age` header, the Express.js CORS configuration architecture:
+
+*   **Reduces network resource waste**: Reduces network resource waste by minimizing the number of Preflight Requests.
+*   **Improves performance**: Improves performance by reducing the latency associated with Preflight Requests."
