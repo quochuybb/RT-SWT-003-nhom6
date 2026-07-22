@@ -229,11 +229,11 @@ Triển khai thư viện `scipy.stats` để kiểm định phân phối kết q
 ### 8.0 Phân công vai trò
 | Role | Thành viên | Trách nhiệm thực thi |
 |---|---|---|
-| **PL** | Nguyễn Quốc Huy | Thiết kế mã nguồn (Coding), viết script tự động hóa LLM-as-a-Judge, viết báo cáo. |
-| **DG** | Bùi Lê Tấn Đạt | Thiết kế 416 mutations, thu thập Private/Public data, Cross-validation. |
-| **LR** | Nguyễn Đăng Khoa | Chạy code thực nghiệm RAG pipeline, cấu hình System Prompts. |
-| **MS** | Lê Đình Quý | Chạy code phân tích Log và trích xuất số lượng nhãn từ JSON logs. |
-| **RW** | Nguyễn Quốc Huy | Chịu trách nhiệm tổng hợp kết quả, soạn thảo văn bản báo cáo và vẽ biểu đồ. |
+| **PL** | Nguyễn Quốc Huy | Phát triển mã nguồn (Coding), chạy mẫu data Private và cấu hình 17B (With Prompt). |
+| **DG** | Bùi Lê Tấn Đạt | Chạy mã thực nghiệm cấu hình 8B (No Prompt) và viết báo cáo kết quả gửi nhóm trưởng. |
+| **LR** | Nguyễn Đăng Khoa | Chạy mã thực nghiệm cấu hình 8B (With Prompt) và viết báo cáo kết quả gửi nhóm trưởng. |
+| **MS** | Lê Đình Quý | Chạy mã thực nghiệm cấu hình 17B (No Prompt) và viết báo cáo kết quả gửi nhóm trưởng. |
+| **RW** | Nguyễn Quốc Huy | Chịu trách nhiệm tổng hợp kết quả từ 3 thành viên, soạn thảo văn bản báo cáo chung và vẽ biểu đồ. |
 
 ### 8.1 Resource Inventory
 | Tài nguyên | Trạng thái | Owner | Ghi chú |
