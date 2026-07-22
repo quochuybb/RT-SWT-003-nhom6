@@ -1,4 +1,0 @@
-mut_id,ai_label,reason
-CTX_030_MUT_01,Abstain,"1) Did it abstain? Yes, the RAG system explicitly refused to answer. 2) Does it contain external true facts not in context? No. 3) Does it follow the mutated context blindly? No. The RAG system chose to abstain instead of blindly following the mutated context."
-CTX_016_MUT_01,Inconsistent,"1) Did not abstain. 2) Contains external true facts not in context, such as 'openapi_extra', 'callback', and links to external documentation. 3) Did not blindly follow the mutated context. Instead, it provided additional information and explanations that are not present in the mutated context but are present in the baseline response."
-CTX_025_MUT_01,Abstain,"1) Did it abstain? Yes, the RAG system explicitly refuses to answer. 2) Does it contain external true facts not in context? No. 3) Does it follow the mutated context blindly? No. Label: Abstain."
