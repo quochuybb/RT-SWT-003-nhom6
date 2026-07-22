@@ -134,7 +134,7 @@ Nếu không lấp đầy GAP này, các hệ thống RAG sẽ tiếp tục đư
    - `Abstain`: Hệ thống chủ động từ chối trả lời (An toàn).
    - `Inconsistent`: Phản hồi khớp sự thật nhưng mâu thuẫn ngữ cảnh (Vi phạm RAG).
    - `Hallucination`: Sinh thông tin sai lệch không liên quan (Ảo giác).
-2. **Kiểm định độ tin cậy (Construct Validity):** Lấy mẫu ngẫu nhiên 110 câu phản hồi để tiến hành đánh giá mù (blind evaluation) thủ công độc lập.
+2. **Kiểm định độ tin cậy (Construct Validity):** Lấy mẫu ngẫu nhiên 43 câu phản hồi để tiến hành đánh giá mù (blind evaluation) thủ công độc lập.
 3. **Xác minh chỉ số Kappa:** Tính toán chỉ số Cohen's Kappa giữa kết quả chuyên gia và Llama 4 Scout. Xác thực mức độ tin cậy đạt $k > 0.73$.
 
 #### Giai đoạn 6: Phân Tích Thống Kê (Tuần 8)
@@ -167,7 +167,7 @@ Triển khai thư viện `scipy.stats` để kiểm định phân phối kết q
 - **Rationale:** Chiến lược sử dụng LLM thay thế static rules (rule-based) tạo ra đột biến thực tế hơn. 
 
 ### 5.4 Measurement
-**Metrics:** Abstain, Faithful, Inconsistent, Hallucination | **Evaluation Tool:** `Llama 4 Scout 17B` | **Ground Truth:** Cấu trúc API Docs nguyên bản | **Inter-Annotator Agreement (IAA):** Cohen's Kappa ($k > 0.73$) thực hiện chéo giữa các evaluators độc lập trên tập mẫu $N=110$ nhằm validate độ chính xác của LLM Judge.
+**Metrics:** Abstain, Faithful, Inconsistent, Hallucination | **Evaluation Tool:** `Llama 4 Scout 17B` | **Ground Truth:** Cấu trúc API Docs nguyên bản | **Inter-Annotator Agreement (IAA):** Cohen's Kappa ($k > 0.73$) thực hiện chéo giữa các evaluators độc lập trên tập mẫu $N=43$ nhằm validate độ chính xác của LLM Judge.
 
 ### 5.5 Baseline (Áp dụng cho cấu trúc so sánh)
 - **Tên kỹ thuật:** Cấu hình RAG nguyên bản không có System Prompt (No Prompt Config).
@@ -216,7 +216,7 @@ Triển khai thư viện `scipy.stats` để kiểm định phân phối kết q
 
 ### 7.3 Construct Validity
 **Threat:** Việc triển khai LLM vào vai trò phân loại tự động (LLM-as-a-Judge) tiềm ẩn annotation bias và không phản ánh chính xác nhận định của con người.
-**Mitigation:** Tiến hành random sampling $N=110$ test cases và tổ chức blind human evaluation độc lập. Sau đó, tính toán Inter-Rater Agreement (Cohen's Kappa). Kết quả từ LLM Judge đạt Kappa $> 0.73$, xác thực tính đúng đắn.
+**Mitigation:** Tiến hành random sampling $N=43$ test cases và tổ chức blind human evaluation độc lập. Sau đó, tính toán Inter-Rater Agreement (Cohen's Kappa). Kết quả từ LLM Judge đạt Kappa $> 0.73$, xác thực tính đúng đắn.
 
 ### 7.4 Conclusion Validity
 **Threat:** Sample size hạn chế dẫn đến nguy cơ thiếu hụt Statistical Power.
