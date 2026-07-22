@@ -1,0 +1,281 @@
+\documentclass[
+    a4paper,
+    man,
+    floatsintext
+]{glossaPX2}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[style=apa,backend=biber,sorting=nyt]{biblatex}
+\NewBibliographyString{unpublished}
+\DefineBibliographyStrings{english}{
+  unpublished = {Unpublished},
+}
+\DefineBibliographyStrings{american}{
+  unpublished = {Unpublished},
+}
+
+\usepackage[font={footnotesize,it}]{caption}
+\usepackage{csquotes}
+\usepackage{booktabs} 
+\usepackage{tabularx}
+\usepackage{linguex} 
+\usepackage{cgloss}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{float}
+\graphicspath{ {./graphics/} }
+\usepackage{ragged2e}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\cfoot{\thepage}
+\newcommand{\quotes}[1]{``#1''}
+\usepackage[title]{appendix}
+\usepackage{booktabs}
+\providecommand{\firstrefdash}{}
+
+\addbibresource{sample.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title[]{Evaluating RAG Under Adversarial Data at Scale: The Inverse Scaling Law of Semantic Poisoning and the Dynamics of LLM-as-a-Judge}
+\author{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+RAG systems have become increasingly popular for enterprise applications as a way to reduce LLM hallucinations by grounding responses in retrieved documents. However, how these systems behave when the retrieved documents themselves are corrupted or semantically mutated has not been thoroughly studied. This work presents an empirical evaluation of RAG systems using 416 AI-generated semantic mutations. We use an LLM-as-a-Judge evaluation pipeline powered by Llama 4 Scout 17B, cross-validated with a human evaluator to ensure scoring reliability. By comparing the effects of model size (8B vs. 17B), the presence or absence of a defensive System Prompt, and public versus private data sources, we uncover several findings. First, larger models are actually more susceptible to misinformation when no System Prompt is provided. Second, RAG systems almost never hallucinate when tested on private data. And finally, across all runs, the hallucination rate never exceeded 0.24\%, effectively staying at zero.
+\end{abstract}
+
+\begin{keywords}
+  Retrieval-Augmented Generation; Semantic Mutation Testing; LLM-as-a-Judge; Prompt Engineering; Misinformation; Information Security
+\end{keywords}
+
+\section{Introduction}
+\label{intro}
+Retrieval-Augmented Generation (RAG) has become a standard approach for leveraging Large Language Models (LLMs) in enterprise information tasks. By feeding retrieved documents into the generation process, RAG addresses the static nature of parametric memory in pretrained models and significantly reduces hallucinations \parencite{lewis2020retrieval}. However, this reliance on external information also introduces a new attack surface. Specifically, if the retrieved context is corrupted, poisoned, or semantically altered, the model has to deal with a conflict between what it already knows and what it is being told, which can compromise the accuracy and reliability of its outputs.
+
+Recent work has started to look into this problem, showing that RAG systems tend to break down when faced with misinformation. In theory, a robust RAG system should be able to detect when the retrieved context is contradictory or clearly wrong and refuse to answer (abstain). In practice, however, LLMs often exhibit what has been called the ``Factual Accuracy Paradox'' \parencite{cuconasu2024power}, where irrelevant or noisy documents seriously degrade the model's ability to produce truthful answers.
+
+Although prior studies have established that this vulnerability exists, several important questions remain open. In particular, there has been limited analysis of how the severity of this vulnerability changes with model size (scaling laws) and whether it can be mitigated through prompt design (Prompt Engineering). On top of that, evaluating these vulnerabilities at scale is itself a challenge. Manual human evaluation is time-consuming, expensive, and hard to scale, which is why LLM-as-a-Judge methods have been gaining traction. But the reliability of these methods is still debated, especially when the task requires distinguishing between a model that simply parrots back wrong information from retrieved documents and one that uses its own knowledge to correct and give a better answer.
+
+This study uses Semantic Mutation Testing to evaluate RAG systems. The goal is to analyze how model size (Llama 3.1 8B and 17B parameters), the use of system prompts, and whether the data is public or private affect the system's ability to resist semantically poisoned documents. To support evaluation at scale, we built an automated evaluation pipeline based on a Mixture of Experts (MoE) architecture. In this pipeline, Llama 4 Scout 17B serves as the AI Judge, followed by a human evaluation step. This setup allows us to not only assess model performance but also examine how reliable the LLM-as-a-Judge approach really is in practice.
+
+\section{Related Work}
+\label{related}
+Prior research on Retrieval-Augmented Generation has predominantly focused on improving retrieval accuracy and reducing LLM hallucinations by grounding responses in verified external documents \parencite{lewis2020retrieval}. However, the resilience of RAG systems against adversarial attacks, specifically data poisoning or semantic mutations within the retrieved context, remains underexplored. While recent works such as Cuconasu et al. (2024) have identified the Factual Accuracy Paradox---where irrelevant or noisy context degrades a model's truthfulness---there is a lack of large-scale empirical studies analyzing how this vulnerability scales with model size or how effectively Prompt Engineering can mitigate the issue. Furthermore, evaluating these vulnerabilities at scale poses a challenge, making LLM-as-a-Judge methodologies increasingly relevant, though their reliability in distinguishing between factual adherence and parametric self-correction requires rigorous validation.
+
+\section{Current Study}
+\label{current}
+This study aims to empirically quantify how well LLMs in RAG systems can defend against semantic mutations. We also analyze the factors that influence this defensive capability. Our hypothesis is that system prompts, while serving as an important protective mechanism, still cannot guarantee that models are fully immune to sophisticated semantic poisoning attacks --- regardless of how large the model is.
+
+To isolate the individual effects of model scale and prompt engineering, we run experiments across five configurations:
+
+\begin{enumerate}
+\item \textbf{Llama 3.1 17B (With Prompt)}: The larger model equipped with a strict defensive system prompt that instructs the model to only rely on the provided context and to actively refuse to answer (abstain) when it detects contradictory information.
+\item \textbf{Llama 3.1 17B (No Prompt)}: The same larger model, but without any defensive prompt --- it just operates using its default conversational finetuning behavior.
+\item \textbf{Llama 3.1 8B (With Prompt)}: The smaller model, given the same defensive system prompt as the first configuration.
+\item \textbf{Llama 3.1 8B (No Prompt)}: The smaller model, without any defensive prompt.
+\item \textbf{Llama 3.1 17B (With Prompt, Private Data)}: While the four configurations above are all evaluated on public data, this one uses a private, internal dataset that is not publicly available online. The purpose is to test whether the RAG model still hallucinates --- and if so, whether the degree of ``accurate fabrication'' (i.e., generating wrong but plausible-sounding information) changes when the model can no longer fall back on knowledge it picked up during pretraining.
+\end{enumerate}
+
+\section{Methodology}
+
+\subsection{Research Materials}
+The core dataset consists of 416 semantic mutations, constructed by taking real, verified context documents and systematically injecting semantic faults into them. Unlike simple rule-based mutations used in previous work --- such as randomly deleting characters or swapping synonyms --- the semantic mutations in this study directly target informational content: altering factual claims, swapping critical numerical values, or inserting buggy code snippets, all while keeping the text grammatically fluent and contextually coherent.
+
+For each of the 416 mutations, the dataset records four components:
+
+\begin{itemize}
+\item The user query (Query).
+\item The original context (containing verified information).
+\item The baseline ground-truth answer.
+\item The mutated context (poisoned).
+\end{itemize}
+
+\subsection{Experimental Procedure}
+For each experimental configuration, the corresponding text generation model (Llama 3.1 8B or 17B) was given the user query along with the mutated context as input. The model-generated responses (Mutated Responses) were then collected and compiled into CSV datasets for the evaluation step.
+
+\subsection{Evaluation Pipeline}
+Evaluating 416 responses across multiple configurations requires a process that is both rigorous and scalable. We therefore adopted a hybrid AI-human evaluation approach with two main components:
+
+\begin{itemize}
+\item \textbf{AI Judge (Primary Evaluator)}: The model \textit{meta-llama/llama-4-scout} (17B) was tasked with evaluating all 416 RAG responses for each configuration. The AI Judge was provided with the query, the mutated context, the ground-truth answer, and the RAG-generated response when given the mutated context. It then classified each response into one of four mutually exclusive labels:
+\begin{enumerate}[label=(\alph*)]
+\item \textit{Faithful}: The model passively follows the mutated context, repeating the misinformation without any intervention from external knowledge.
+\item \textit{Inconsistent}: The model recognizes the discrepancy in the context and uses its internal parametric knowledge to self-correct, producing a factually accurate answer that does not match the mutated text.
+\item \textit{Abstain}: The model explicitly refuses to answer, citing reasons related to contradictory or insufficient information.
+\item \textit{Hallucination}: The model fabricates information that appears in neither the mutated context nor the ground-truth answer.
+\end{enumerate}
+\item \textbf{Human Evaluator}: To verify the accuracy of the AI Judge's classifications, we also had a human evaluator independently score a fixed, randomly selected subset of 42 samples per configuration. The human evaluations serve as the ground-truth benchmark for measuring the reliability of the AI Judge.
+\end{itemize}
+
+\subsection{Data Analysis}
+Statistical rigor is a key concern in our methodology. To validate the AI Judge's reliability, we computed Cohen's Kappa ($k$) to measure the level of agreement between the AI Judge and the human evaluator on the 42-sample subsets. We chose Cohen's Kappa because it accounts for the possibility that agreement could happen by chance, making it a more trustworthy measure of inter-rater reliability compared to simple agreement percentages.
+
+Additionally, to test whether the RAG system can effectively maintain a defensive stance, we set up a null hypothesis ($H_0$) stating that a safe RAG system should achieve an Abstain rate of at least $\ge 90\%$ when faced with semantic mutations. We then applied exact Binomial tests (using \texttt{scipy.stats.binomtest}) to determine whether the observed Abstain rates were statistically significant relative to this threshold.
+
+\section{Results}
+Running the evaluation pipeline produced a comprehensive dataset with over 2,000 AI scoring judgments. Table \ref{tab:results} presents the aggregated evaluation results across all five experimental configurations, including Cohen's Kappa scores and percentage distributions for the four evaluation labels.
+
+\begin{table}[H]
+\centering
+\caption{Aggregated RAG Evaluation Results across 416 Semantic Mutations and 5 Configurations.}
+\label{tab:results}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model Configuration} & \textbf{Kappa ($k$)} & \textbf{Abstain} & \textbf{Faithful} & \textbf{Inconsistent} & \textbf{Hallucination} \\
+\midrule
+Llama 3.1 17B (With Prompt, Private Data) & 0.918 & 51.92\% & 45.19\% & 2.88\% & 0.00\% \\
+Llama 3.1 17B (With Prompt) & 0.738 & 60.10\% & 30.53\% & 9.37\% & 0.00\% \\
+Llama 3.1 17B (No Prompt) & 0.825 & 3.61\% & 51.44\% & 44.71\% & 0.24\% \\
+Llama 3.1 8B (With Prompt) & 0.901 & 63.70\% & 30.29\% & 5.77\% & 0.24\% \\
+Llama 3.1 8B (No Prompt) & 0.806 & 42.55\% & 27.64\% & 29.81\% & 0.00\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Binomial tests on the Abstain rates yielded $p$-values approaching zero (e.g., $p = 5.76 \times 10^{-58}$ for the 17B With Prompt configuration, and $p = 5.61 \times 10^{-126}$ for the 8B No Prompt configuration). In every case, we strongly reject the null hypothesis ($H_0$), confirming that none of the tested configurations successfully maintained the $\ge 90\%$ defensive threshold.
+
+To better understand the effect of each variable (model size, prompt engineering, and data source), we break down the results for each configuration below.
+
+\subsection{Configuration 1: Llama 3.1 17B (With Prompt) -- Public Data}
+\begin{table}[H]
+\centering
+\caption{Evaluation Results for Llama 3.1 17B (With Prompt). $k = 0.7375$.}
+\label{tab:17b_prompt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Classification} & \textbf{Count} & \textbf{Rate (\%)} \\
+\midrule
+Abstain & 250 & 60.10\% \\
+Faithful & 127 & 30.53\% \\
+Inconsistent & 39 & 9.37\% \\
+Hallucination & 0 & 0.00\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+This is considered the strongest baseline configuration in the study, using the 17B model combined with a strict defensive System Prompt, tested on the Public dataset (FastAPI documentation). The Abstain rate reached 60.10\%, showing that the System Prompt is fairly effective at steering model behavior when dealing with corrupted data. However, this number still falls short of the absolute safety threshold ($\ge 90\%$). Notably, 30.53\% of the time the model still passively accepted and followed the misinformation in the context (Faithful), suggesting that lexical instructions alone are not enough to fully eliminate the model's dependence on the provided context.
+
+\subsection{Configuration 2: Llama 3.1 17B (No Prompt) -- Public Data}
+\begin{table}[H]
+\centering
+\caption{Evaluation Results for Llama 3.1 17B (No Prompt). $k = 0.8246$.}
+\label{tab:17b_noprompt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Classification} & \textbf{Count} & \textbf{Rate (\%)} \\
+\midrule
+Faithful & 214 & 51.44\% \\
+Inconsistent & 186 & 44.71\% \\
+Abstain & 15 & 3.61\% \\
+Hallucination & 1 & 0.24\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+Removing the System Prompt led to a dramatic collapse of the defensive line. The 17B model almost never refused to answer (Abstain dropped to just 3.61\%). Instead, thanks to its strong reading comprehension, the model's behavior split into two opposite tendencies: either it fully trusted the corrupted text (Faithful shot up to 51.44\%), or it automatically drew on its deep background knowledge to correct the misinformation (Inconsistent reached 44.71\%). It is worth noting that the model correcting information on its own --- even if the corrections are accurate --- actually violates the groundedness principle, which is a core requirement for any RAG system.
+
+\subsection{Configuration 3: Llama 3.1 8B (With Prompt) -- Public Data}
+\begin{table}[H]
+\centering
+\caption{Evaluation Results for Llama 3.1 8B (With Prompt). $k = 0.9012$.}
+\label{tab:8b_prompt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Classification} & \textbf{Count} & \textbf{Rate (\%)} \\
+\midrule
+Abstain & 265 & 63.70\% \\
+Faithful & 126 & 30.29\% \\
+Inconsistent & 24 & 5.77\% \\
+Hallucination & 1 & 0.24\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+An interesting finding here is that the 8B model, despite being smaller, actually showed a slightly higher defensive rate (Abstain at 63.70\%) compared to the 17B model under the same System Prompt conditions. This suggests that the System Prompt works more effectively on smaller models: when encountering text with contradictions beyond their processing capacity, the 8B model tends to take the safe route of refusing to answer, rather than attempting the kind of complex reasoning that the 17B model goes for.
+
+\subsection{Configuration 4: Llama 3.1 8B (No Prompt) -- Public Data}
+\begin{table}[H]
+\centering
+\caption{Evaluation Results for Llama 3.1 8B (No Prompt). $k = 0.8056$.}
+\label{tab:8b_noprompt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Classification} & \textbf{Count} & \textbf{Rate (\%)} \\
+\midrule
+Abstain & 177 & 42.55\% \\
+Inconsistent & 124 & 29.81\% \\
+Faithful & 115 & 27.64\% \\
+Hallucination & 0 & 0.00\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+In sharp contrast to the collapse of the 17B No Prompt configuration, the 8B No Prompt model still maintained a reasonable Abstain rate (42.55\%). Interestingly, the model's more limited reasoning ability actually turned into an unexpected advantage here: when confronted with subtly mutated text full of contradictions, the model simply was not capable enough to reconcile the conflicting information, so it defaulted to Abstain out of confusion.
+
+\subsection{Configuration 5: Llama 3.1 17B (With Prompt) -- Private Data}
+\begin{table}[H]
+\centering
+\caption{Evaluation Results for Private Data. $k = 0.9180$.}
+\label{tab:data_private}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Classification} & \textbf{Count} & \textbf{Rate (\%)} \\
+\midrule
+Abstain & 216 & 51.92\% \\
+Faithful & 188 & 45.19\% \\
+Inconsistent & 12 & 2.88\% \\
+Hallucination & 0 & 0.00\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+This configuration evaluates the 17B model on an internal (Private Data) dataset that is not publicly available online. Unlike the four previous configurations that used public data, the main goal here is to check whether the RAG system still hallucinates or ``corrects to the right answer'' (Inconsistent --- i.e., uses background knowledge to fix errors) when the model has no parametric knowledge about this type of data from pretraining.
+
+The results show that the Inconsistent rate dropped sharply to just 2.88\% because the model simply does not have any relevant background knowledge to draw on for self-correction. On the other hand, the rate at which the model was fooled and passively accepted the misinformation (Faithful) jumped to 45.19\%. Notably, the Kappa score reached the highest value in the entire study (0.9180), demonstrating very high accuracy and consistency of the same AI Judge when applied to this dataset.
+
+\section{Discussion and Key Findings}
+The aggregated data provided deep insights into how RAG systems behave under adversarial semantic conditions. By cross-referencing the experimental configurations, we were able to isolate five notable findings that challenge some assumptions commonly held in NLP security and evaluation methodology.
+
+\subsection{Finding 1: The Parametric Shield Hypothesis (Public vs. Private Data)}
+Comparing results between Public data (FastAPI documentation) and Private data (internal security documents) revealed a critical variable for RAG safety: the LLM's parametric knowledge. When evaluated on FastAPI data, the 17B model showed a relatively high Inconsistent rate (9.37\% with prompt and 44.71\% without prompt), because the model could cross-reference the mutated context against knowledge it had picked up during pretraining and spot the inconsistencies.
+
+However, when processing Private Data, the LLM completely lacked this ``parametric shield.'' Without any background knowledge to compare against, the Inconsistent rate dropped sharply to just 2.88\%, while the rate of being fooled (Faithful) climbed significantly to 45.19\%. This finding points to a concerning reality: RAG systems deployed in enterprise environments with internal data are considerably more vulnerable to semantic attacks compared to systems operating on publicly available data.
+
+\subsection{Finding 2: The Inverse Scaling Law of Semantic Poisoning}
+One of the fundamental assumptions deeply embedded in the AI field is that scaling laws hold across the board: bigger models with greater capabilities are generally thought to be safer, more resistant to adversarial attacks, and better at catching logical errors. However, comparing the unprotected models (No Prompt) in our study reveals a counterintuitive weakness that we call ``The Inverse Scaling Law of Semantic Poisoning.''
+
+Specifically, when the defensive system prompt was removed, the 17B model's Abstain rate plummeted to just 3.61\%. Meanwhile, the smaller 8B model still managed to maintain an Abstain rate of 42.55\% under the same conditions.
+
+This seemingly paradoxical behavior stems from the 17B model's superior instruction-following and reading comprehension abilities. When faced with complex semantically mutated context, the 17B model tends to process and integrate the flawed logic seamlessly. Without a System Prompt telling it to be skeptical, the model defaults to treating the provided context as absolute truth, leading it to confidently produce Faithful responses (51.44\%). On top of that, its large parametric memory means it frequently detects the errors but then takes it upon itself to correct them (Inconsistent: 44.71\%), which violates the groundedness principle that is central to RAG. The 8B model, on the other hand, lacks the cognitive capacity to smoothly synthesize the contradictory logic in the poisoned context; it gets confused and more often chooses to Abstain (42.55\%). From this, we conclude that more capable LLMs are ironically \textit{more} vulnerable to semantic poisoning when unprotected, because their very capabilities enable a kind of self-deception.
+
+\subsection{Finding 3: Reliability and Consistency of LLM-as-a-Judge}
+The reliability of LLM-as-a-Judge methods has long been a topic of interest in automated evaluation research. In this study, rather than using different judge versions for different data types, we chose to use a single AI Judge across all five experimental configurations, covering both Public and Private data.
+
+The cross-validation with human evaluations showed that the AI Judge maintained very high accuracy and consistency. Specifically, Cohen's Kappa scores ranged from Substantial to Almost Perfect agreement ($0.738 \le k \le 0.918$). Notably, on the internal dataset (Private Data), the agreement between the AI Judge and the human evaluator peaked at 0.9180. This shows that a 17B judge model is fully capable of making fine-grained semantic distinctions --- such as telling apart whether the RAG system merely repeated misinformation or used implicit knowledge to ``correct to the right answer'' --- at a level comparable to human judgment, in a fair and objective manner. This finding supports the case for using LLM-as-a-Judge in large-scale security evaluation tasks without needing to constantly retune the judge for each data type.
+
+\subsection{Finding 4: The Hallucination Myth in Semantic Attacks}
+A significant portion of NLP security research focuses on measuring and reducing ``hallucinations'' in LLMs. However, our data suggests that this focus is somewhat misplaced when it comes to semantic attacks. Across over 2,000 automated evaluations conducted on two different model sizes, the Hallucination rate never exceeded 0.24\%, and in practice stayed effectively at zero.
+
+When faced with corrupted semantic data, the RAG models did not panic and make up random facts. Instead, their failure mode was distinctly binary: the model either played the role of a passive victim, repeating the false claims verbatim (Faithful), or played the role of a confident rebel, detecting the errors and fixing them using its pretrained knowledge (Inconsistent). This finding resonates with the Factual Accuracy Paradox noted in prior work \parencite{cuconasu2024power}, and suggests that future security research should shift its focus from measuring ``hallucinations'' to measuring ``faithfulness to poison.''
+
+\subsection{Finding 5: Prompt Engineering is a Shield, Not a Cure}
+Our evaluation clearly demonstrates the protective role of System Prompts. Deploying a defensive prompt noticeably improved model resilience: the 17B model's Abstain rate was boosted from 3.61\% to 60.10\%, and the 8B model's from 42.55\% to 63.70\%. System prompts essentially act as a first layer of ``immune defense'' in the RAG architecture.
+
+However, despite these improvements, not a single configuration in the study reached the $\ge 90\%$ Abstain threshold. The Binomial tests also decisively rejected the null hypothesis ($H_0$) across all experimental scenarios. This result reinforces the core argument of the study: while Prompt Engineering is a necessary first line of defense, it is not by itself sufficient to fully solve the semantic poisoning problem. Lexical instructions alone simply cannot override the deeper forms of semantic manipulation. This limitation highlights the urgent need for structural and architectural defense mechanisms in future RAG systems, such as approaches combining GraphRAG with Controlled Noise Injection.
+
+\section{Threats to Validity}
+\label{threats}
+Several threats to the validity of this study should be acknowledged. First, concerning \textbf{Construct Validity}, the reliance on an AI Judge (Llama 4 Scout 17B) introduces the risk of evaluator bias, such as Formatting Bias, where the judge might incorrectly penalize responses for stylistic changes. We mitigated this by utilizing an upgraded prompt with few-shot examples and cross-validating with a human evaluator, achieving a high Cohen's Kappa. Second, regarding \textbf{Internal Validity}, the generation of the Private Data dataset relied on manually crafted synthetic documents to ensure the model had no parametric knowledge. While we ensured high technical fidelity, these synthetic mutations might not fully capture the complexity of real-world enterprise data poisoning. Finally, for \textbf{External Validity}, our experiments were limited to the Llama 3.1 model family (8B and 17B) and Qwen3-32B for mutation generation. Different LLM architectures or significantly larger models (e.g., GPT-4 or Claude 3.5) might exhibit different defensive behaviors or scaling laws when subjected to semantic mutations.
+
+\section{Conclusion}
+This study provides fairly comprehensive empirical evidence on the inherent vulnerabilities of Retrieval-Augmented Generation systems when exposed to semantic mutations. By evaluating across different model sizes and prompt configurations, we identified what we call the Inverse Scaling Law of Semantic Poisoning --- showing that, contrary to common intuition, larger models are actually more vulnerable when they lack proper safeguards. We also demonstrated the high reliability and consistency of the LLM-as-a-Judge approach when applied across both public and private datasets.
+
+Finally, our results show that semantic attacks tend to trigger misinformation acceptance rather than hallucination, and that Prompt Engineering alone is not enough to secure RAG deployments in practice. In summary, while prompt design can help reduce vulnerabilities to some extent, architectural improvements remain essential to ensuring the integrity of LLM applications against adversarial data streams.
+
+\printbibliography
+
+\end{document}

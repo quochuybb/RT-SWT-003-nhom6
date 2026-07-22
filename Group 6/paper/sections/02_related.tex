@@ -1,0 +1,17 @@
+\section{Related Work}
+\label{related}
+Prior research on Retrieval-Augmented Generation has predominantly focused on improving retrieval accuracy and reducing LLM hallucinations by grounding responses in verified external documents \parencite{lewis2020retrieval}. However, the resilience of RAG systems against adversarial attacks, specifically data poisoning or semantic mutations within the retrieved context, remains underexplored. While recent works such as Cuconasu et al. (2024) have identified the Factual Accuracy Paradox---where irrelevant or noisy context degrades a model's truthfulness---there is a lack of large-scale empirical studies analyzing how this vulnerability scales with model size or how effectively Prompt Engineering can mitigate the issue. Furthermore, evaluating these vulnerabilities at scale poses a challenge, making LLM-as-a-Judge methodologies increasingly relevant, though their reliability in distinguishing between factual adherence and parametric self-correction requires rigorous validation.
+
+\section{Current Study}
+\label{current}
+This study aims to empirically quantify how well LLMs in RAG systems can defend against semantic mutations. We also analyze the factors that influence this defensive capability. Our hypothesis is that system prompts, while serving as an important protective mechanism, still cannot guarantee that models are fully immune to sophisticated semantic poisoning attacks --- regardless of how large the model is.
+
+To isolate the individual effects of model scale and prompt engineering, we run experiments across five configurations:
+
+\begin{enumerate}
+\item \textbf{Llama 3.1 17B (With Prompt)}: The larger model equipped with a strict defensive system prompt that instructs the model to only rely on the provided context and to actively refuse to answer (abstain) when it detects contradictory information.
+\item \textbf{Llama 3.1 17B (No Prompt)}: The same larger model, but without any defensive prompt --- it just operates using its default conversational finetuning behavior.
+\item \textbf{Llama 3.1 8B (With Prompt)}: The smaller model, given the same defensive system prompt as the first configuration.
+\item \textbf{Llama 3.1 8B (No Prompt)}: The smaller model, without any defensive prompt.
+\item \textbf{Llama 3.1 17B (With Prompt, Private Data)}: While the four configurations above are all evaluated on public data, this one uses a private, internal dataset that is not publicly available online. The purpose is to test whether the RAG model still hallucinates --- and if so, whether the degree of ``accurate fabrication'' (i.e., generating wrong but plausible-sounding information) changes when the model can no longer fall back on knowledge it picked up during pretraining.
+\end{enumerate}

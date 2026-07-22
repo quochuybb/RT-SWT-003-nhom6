@@ -1,0 +1,115 @@
+\section{Results}
+Running the evaluation pipeline produced a comprehensive dataset with over 2,000 AI scoring judgments. Table \ref{tab:results} presents the aggregated evaluation results across all five experimental configurations, including Cohen's Kappa scores and percentage distributions for the four evaluation labels.
+
+\begin{table}[H]
+\centering
+\caption{Aggregated RAG Evaluation Results across 416 Semantic Mutations and 5 Configurations.}
+\label{tab:results}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model Configuration} & \textbf{Kappa ($k$)} & \textbf{Abstain} & \textbf{Faithful} & \textbf{Inconsistent} & \textbf{Hallucination} \\
+\midrule
+Llama 3.1 17B (With Prompt, Private Data) & 0.918 & 51.92\% & 45.19\% & 2.88\% & 0.00\% \\
+Llama 3.1 17B (With Prompt) & 0.738 & 60.10\% & 30.53\% & 9.37\% & 0.00\% \\
+Llama 3.1 17B (No Prompt) & 0.825 & 3.61\% & 51.44\% & 44.71\% & 0.24\% \\
+Llama 3.1 8B (With Prompt) & 0.901 & 63.70\% & 30.29\% & 5.77\% & 0.24\% \\
+Llama 3.1 8B (No Prompt) & 0.806 & 42.55\% & 27.64\% & 29.81\% & 0.00\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Binomial tests on the Abstain rates yielded $p$-values approaching zero (e.g., $p = 5.76 \times 10^{-58}$ for the 17B With Prompt configuration, and $p = 5.61 \times 10^{-126}$ for the 8B No Prompt configuration). In every case, we strongly reject the null hypothesis ($H_0$), confirming that none of the tested configurations successfully maintained the $\ge 90\%$ defensive threshold.
+
+To better understand the effect of each variable (model size, prompt engineering, and data source), we break down the results for each configuration below.
+
+\subsection{Configuration 1: Llama 3.1 17B (With Prompt) -- Public Data}
+\begin{table}[H]
+\centering
+\caption{Evaluation Results for Llama 3.1 17B (With Prompt). $k = 0.7375$.}
+\label{tab:17b_prompt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Classification} & \textbf{Count} & \textbf{Rate (\%)} \\
+\midrule
+Abstain & 250 & 60.10\% \\
+Faithful & 127 & 30.53\% \\
+Inconsistent & 39 & 9.37\% \\
+Hallucination & 0 & 0.00\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+This is considered the strongest baseline configuration in the study, using the 17B model combined with a strict defensive System Prompt, tested on the Public dataset (FastAPI documentation). The Abstain rate reached 60.10\%, showing that the System Prompt is fairly effective at steering model behavior when dealing with corrupted data. However, this number still falls short of the absolute safety threshold ($\ge 90\%$). Notably, 30.53\% of the time the model still passively accepted and followed the misinformation in the context (Faithful), suggesting that lexical instructions alone are not enough to fully eliminate the model's dependence on the provided context.
+
+\subsection{Configuration 2: Llama 3.1 17B (No Prompt) -- Public Data}
+\begin{table}[H]
+\centering
+\caption{Evaluation Results for Llama 3.1 17B (No Prompt). $k = 0.8246$.}
+\label{tab:17b_noprompt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Classification} & \textbf{Count} & \textbf{Rate (\%)} \\
+\midrule
+Faithful & 214 & 51.44\% \\
+Inconsistent & 186 & 44.71\% \\
+Abstain & 15 & 3.61\% \\
+Hallucination & 1 & 0.24\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+Removing the System Prompt led to a dramatic collapse of the defensive line. The 17B model almost never refused to answer (Abstain dropped to just 3.61\%). Instead, thanks to its strong reading comprehension, the model's behavior split into two opposite tendencies: either it fully trusted the corrupted text (Faithful shot up to 51.44\%), or it automatically drew on its deep background knowledge to correct the misinformation (Inconsistent reached 44.71\%). It is worth noting that the model correcting information on its own --- even if the corrections are accurate --- actually violates the groundedness principle, which is a core requirement for any RAG system.
+
+\subsection{Configuration 3: Llama 3.1 8B (With Prompt) -- Public Data}
+\begin{table}[H]
+\centering
+\caption{Evaluation Results for Llama 3.1 8B (With Prompt). $k = 0.9012$.}
+\label{tab:8b_prompt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Classification} & \textbf{Count} & \textbf{Rate (\%)} \\
+\midrule
+Abstain & 265 & 63.70\% \\
+Faithful & 126 & 30.29\% \\
+Inconsistent & 24 & 5.77\% \\
+Hallucination & 1 & 0.24\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+An interesting finding here is that the 8B model, despite being smaller, actually showed a slightly higher defensive rate (Abstain at 63.70\%) compared to the 17B model under the same System Prompt conditions. This suggests that the System Prompt works more effectively on smaller models: when encountering text with contradictions beyond their processing capacity, the 8B model tends to take the safe route of refusing to answer, rather than attempting the kind of complex reasoning that the 17B model goes for.
+
+\subsection{Configuration 4: Llama 3.1 8B (No Prompt) -- Public Data}
+\begin{table}[H]
+\centering
+\caption{Evaluation Results for Llama 3.1 8B (No Prompt). $k = 0.8056$.}
+\label{tab:8b_noprompt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Classification} & \textbf{Count} & \textbf{Rate (\%)} \\
+\midrule
+Abstain & 177 & 42.55\% \\
+Inconsistent & 124 & 29.81\% \\
+Faithful & 115 & 27.64\% \\
+Hallucination & 0 & 0.00\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+In sharp contrast to the collapse of the 17B No Prompt configuration, the 8B No Prompt model still maintained a reasonable Abstain rate (42.55\%). Interestingly, the model's more limited reasoning ability actually turned into an unexpected advantage here: when confronted with subtly mutated text full of contradictions, the model simply was not capable enough to reconcile the conflicting information, so it defaulted to Abstain out of confusion.
+
+\subsection{Configuration 5: Llama 3.1 17B (With Prompt) -- Private Data}
+\begin{table}[H]
+\centering
+\caption{Evaluation Results for Private Data. $k = 0.9180$.}
+\label{tab:data_private}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Classification} & \textbf{Count} & \textbf{Rate (\%)} \\
+\midrule
+Abstain & 216 & 51.92\% \\
+Faithful & 188 & 45.19\% \\
+Inconsistent & 12 & 2.88\% \\
+Hallucination & 0 & 0.00\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+This configuration evaluates the 17B model on an internal (Private Data) dataset that is not publicly available online. Unlike the four previous configurations that used public data, the main goal here is to check whether the RAG system still hallucinates or ``corrects to the right answer'' (Inconsistent --- i.e., uses background knowledge to fix errors) when the model has no parametric knowledge about this type of data from pretraining.
+
+The results show that the Inconsistent rate dropped sharply to just 2.88\% because the model simply does not have any relevant background knowledge to draw on for self-correction. On the other hand, the rate at which the model was fooled and passively accepted the misinformation (Faithful) jumped to 45.19\%. Notably, the Kappa score reached the highest value in the entire study (0.9180), demonstrating very high accuracy and consistency of the same AI Judge when applied to this dataset.

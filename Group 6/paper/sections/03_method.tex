@@ -1,0 +1,35 @@
+\section{Methodology}
+
+\subsection{Research Materials}
+The core dataset consists of 416 semantic mutations, constructed by taking real, verified context documents and systematically injecting semantic faults into them. Unlike simple rule-based mutations used in previous work --- such as randomly deleting characters or swapping synonyms --- the semantic mutations in this study directly target informational content: altering factual claims, swapping critical numerical values, or inserting buggy code snippets, all while keeping the text grammatically fluent and contextually coherent.
+
+For each of the 416 mutations, the dataset records four components:
+
+\begin{itemize}
+\item The user query (Query).
+\item The original context (containing verified information).
+\item The baseline ground-truth answer.
+\item The mutated context (poisoned).
+\end{itemize}
+
+\subsection{Experimental Procedure}
+For each experimental configuration, the corresponding text generation model (Llama 3.1 8B or 17B) was given the user query along with the mutated context as input. The model-generated responses (Mutated Responses) were then collected and compiled into CSV datasets for the evaluation step.
+
+\subsection{Evaluation Pipeline}
+Evaluating 416 responses across multiple configurations requires a process that is both rigorous and scalable. We therefore adopted a hybrid AI-human evaluation approach with two main components:
+
+\begin{itemize}
+\item \textbf{AI Judge (Primary Evaluator)}: The model \textit{meta-llama/llama-4-scout} (17B) was tasked with evaluating all 416 RAG responses for each configuration. The AI Judge was provided with the query, the mutated context, the ground-truth answer, and the RAG-generated response when given the mutated context. It then classified each response into one of four mutually exclusive labels:
+\begin{enumerate}[label=(\alph*)]
+\item \textit{Faithful}: The model passively follows the mutated context, repeating the misinformation without any intervention from external knowledge.
+\item \textit{Inconsistent}: The model recognizes the discrepancy in the context and uses its internal parametric knowledge to self-correct, producing a factually accurate answer that does not match the mutated text.
+\item \textit{Abstain}: The model explicitly refuses to answer, citing reasons related to contradictory or insufficient information.
+\item \textit{Hallucination}: The model fabricates information that appears in neither the mutated context nor the ground-truth answer.
+\end{enumerate}
+\item \textbf{Human Evaluator}: To verify the accuracy of the AI Judge's classifications, we also had a human evaluator independently score a fixed, randomly selected subset of 42 samples per configuration. The human evaluations serve as the ground-truth benchmark for measuring the reliability of the AI Judge.
+\end{itemize}
+
+\subsection{Data Analysis}
+Statistical rigor is a key concern in our methodology. To validate the AI Judge's reliability, we computed Cohen's Kappa ($k$) to measure the level of agreement between the AI Judge and the human evaluator on the 42-sample subsets. We chose Cohen's Kappa because it accounts for the possibility that agreement could happen by chance, making it a more trustworthy measure of inter-rater reliability compared to simple agreement percentages.
+
+Additionally, to test whether the RAG system can effectively maintain a defensive stance, we set up a null hypothesis ($H_0$) stating that a safe RAG system should achieve an Abstain rate of at least $\ge 90\%$ when faced with semantic mutations. We then applied exact Binomial tests (using \texttt{scipy.stats.binomtest}) to determine whether the observed Abstain rates were statistically significant relative to this threshold.
