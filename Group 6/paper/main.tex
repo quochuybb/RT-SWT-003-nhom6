@@ -7,8 +7,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-\usepackage[round]{natbib}
-\newcommand{\parencite}[1]{\citep{#1}}
+\newcommand{\parencite}[1]{\cite{#1}}
 
 \usepackage[font={footnotesize,it}]{caption}
 \usepackage{csquotes}
@@ -253,6 +252,32 @@ This configuration evaluates the 17B model on an internal (Private Data) dataset
 
 The results show that the Inconsistent rate dropped sharply to just 2.88\% because the model simply does not have any relevant background knowledge to draw on for self-correction. On the other hand, the rate at which the model was fooled and passively accepted the misinformation (Faithful) jumped to 45.19\%. Notably, the Kappa score reached the highest value in the entire study (0.9180), demonstrating very high accuracy and consistency of the same AI Judge when applied to this dataset.
 
+\subsection{Research Question Analysis}
+
+\subsubsection{RQ1: Model Scale vs Vulnerability (Inverse Scaling Law)}
+
+\textbf{Hypothesis:} We set out to test whether larger models become more vulnerable to semantic mutations when no defensive System Prompt is deployed.
+\begin{itemize}
+  \item $H_0$: The Abstain rate of the 17B model is greater than or equal to that of the 8B model (Abstain$_{17B}$ $\ge$ Abstain$_{8B}$). That is, the larger model is at least as safe as the smaller one.
+  \item $H_1$: The Abstain rate of the 17B model is strictly lower than that of the 8B model (Abstain$_{17B}$ $<$ Abstain$_{8B}$). That is, the larger model is more vulnerable.
+\end{itemize}
+
+\textbf{Result:} The experimental data decisively \textbf{rejects $H_0$}. Under identical No Prompt conditions, the 17B model's Abstain rate collapsed to just 3.61\% (Table~\ref{tab:17b_noprompt}), while the 8B model maintained an Abstain rate of 42.55\% (Table~\ref{tab:8b_noprompt}). A Two-Proportion Z-test confirmed this difference is statistically significant ($p < 0.05$, $\alpha = 0.05$).
+
+\textbf{Analysis:} This result confirms the \textit{Inverse Scaling Law of Semantic Poisoning}. The 17B model's superior instruction-following and reading comprehension abilities become a liability when unprotected: it seamlessly integrates flawed logic from the poisoned context and confidently produces Faithful responses (51.44\%), or detects the errors but overrides the context using its own parametric knowledge (Inconsistent: 44.71\%). The 8B model, lacking the cognitive capacity to reconcile contradictory information, defaults to the safer behavior of refusing to answer. In short, greater model capability amplifies vulnerability to semantic poisoning in the absence of explicit grounding instructions.
+
+\subsubsection{RQ2: Data Domain \& Parametric Shield}
+
+\textbf{Hypothesis:} We tested whether the model's ability to self-correct (Inconsistent Rate) diminishes when evaluated on Private Data that was not seen during pretraining.
+\begin{itemize}
+  \item $H_0$: The Inconsistent rate on Private Data is greater than or equal to that on Public Data (Inconsistent$_{Private}$ $\ge$ Inconsistent$_{Public}$). That is, the model's self-correction ability is maintained regardless of data domain.
+  \item $H_1$: The Inconsistent rate on Private Data is strictly lower than that on Public Data (Inconsistent$_{Private}$ $<$ Inconsistent$_{Public}$). That is, the model loses its self-correction ability on unfamiliar data.
+\end{itemize}
+
+\textbf{Result:} The experimental data \textbf{rejects $H_0$}. On Private Data, the Inconsistent rate dropped to just 2.88\% (Table~\ref{tab:data_private}), compared to 9.37\% on Public Data in the equivalent 17B With Prompt configuration (Table~\ref{tab:17b_prompt}). A Two-Proportion Z-test confirmed this difference is statistically significant ($p < 0.05$, $\alpha = 0.05$).
+
+\textbf{Analysis:} This confirms the \textit{Parametric Shield Hypothesis}. When processing Public Data (FastAPI documentation), the 17B model could cross-reference the mutated context against knowledge acquired during pretraining to detect inconsistencies. On Private Data, this ``parametric shield'' is entirely absent --- the model has no prior knowledge to fall back on. As a result, it becomes significantly more susceptible to blindly accepting poisoned information, with the Faithful rate surging to 45.19\%. This finding carries serious implications for enterprise RAG deployments: systems handling proprietary or internal data are inherently more vulnerable to semantic attacks than those operating on publicly available information.
+
 \section{Discussion and Key Findings}
 The aggregated data provided deep insights into how RAG systems behave under adversarial semantic conditions. By cross-referencing the experimental configurations, we were able to isolate five notable findings that challenge some assumptions commonly held in NLP security and evaluation methodology.
 
@@ -294,26 +319,14 @@ Finally, our results show that semantic attacks tend to trigger misinformation a
 
 \begin{thebibliography}{9}
 
-\bibitem[Lewis et al.(2020)]{lewis2020retrieval}
-Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N., K{\"u}ttler, H., Lewis, M., Yih, W.-t., \& Rockt{\"a}schel, T. (2020). 
-\textit{Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks}. 
-Advances in Neural Information Processing Systems, 33, 9459--9474. \\
-DOI: \url{https://doi.org/10.48550/arXiv.2005.11401} \\ 
-Link: \url{https://arxiv.org/abs/2005.11401}
+\bibitem{lewis2020retrieval}
+P. Lewis et al., ``Retrieval-augmented generation for knowledge-intensive NLP tasks,'' in \textit{Proc. NeurIPS}, 2020. [Online]. Available: \url{https://doi.org/10.48550/arXiv.2005.11401}
 
-\bibitem[Cuconasu et al.(2024)]{cuconasu2024power}
-Cuconasu, F., Trappolini, G., Siciliani, F., Filice, S., Campagnano, C., Maistro, Y., Schaer, R., \& Silvestri, F. (2024). 
-\textit{The Power of Noise: Redefining Retrieval for RAG Systems}. 
-Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval. \\
-DOI: \url{https://doi.org/10.1145/3626772.3657831} \\ 
-Link: \url{https://dl.acm.org/doi/10.1145/3626772.3657831}
+\bibitem{cuconasu2024power}
+F. Cuconasu, G. Trappolini, F. Siciliani, S. Filice, C. Campagnano, Y. Maistro, R. Schaer, and F. Silvestri, ``The power of noise: Redefining retrieval for RAG systems,'' in \textit{Proc. 47th Int. ACM SIGIR Conf. Research and Development in Information Retrieval}, 2024. [Online]. Available: \url{https://doi.org/10.1145/3626772.3657831}
 
-\bibitem[Momtaz et al.(2026)]{momtaz2026mutation}
-Momtaz, Y., Brescia, M., \& Ettari, A. (2026). 
-\textit{Mutation Testing for Assessing RAG Pipeline Reliability: The System Prompt as the Primary Grounding Mechanism}. 
-Unpublished manuscript. Submitted to QRS 2026. \\
-DOI: N/A (Preprint) \\
-Link: \url{https://www.researchgate.net/publication/403874657_Mutation_Testing_for_Assessing_RAG_Pipeline_Reliability_The_System_Prompt_as_the_Primary_Grounding_Mechanism}
+\bibitem{momtaz2026mutation}
+Y. Momtaz, M. Brescia, and A. Ettari, ``Mutation testing for assessing RAG pipeline reliability: The system prompt as the primary grounding mechanism,'' submitted to QRS 2026, preprint available at ResearchGate, 2026. [Online]. Available: \url{https://www.researchgate.net/publication/403874657_Mutation_Testing_for_Assessing_RAG_Pipeline_Reliability_The_System_Prompt_as_the_Primary_Grounding_Mechanism}
 
 \end{thebibliography}
 
